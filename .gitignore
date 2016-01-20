@@ -1,7 +1,11 @@
-.idea
+.*
+!*.gitkeep
+!/.gitignore
+!.bowerrc
+
 bower_components
+node_modules
+
 coverage
 docs
-node_modules
 dist
-.tmp
