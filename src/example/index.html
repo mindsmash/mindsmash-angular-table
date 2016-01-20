@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>mindsmash-angular-table</title>
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css"/>
+  </head>
+  <body ng-app="app" ng-controller="AppController as vm">
+    <div class="container">
+      <div class="panel panel-default" style="margin-top: 20px;">
+        <div class="panel-heading clearfix">
+          <msm-table-column-selector api="vm.api" class="pull-left"></msm-table-column-selector>
+          <msm-table-pagination-size api="vm.api" class="pull-right"></msm-table-pagination-size>
+        </div>
+        <div class="panel-body">
+          <msm-table-pager api="vm.api"></msm-table-pager>
+          <msm-table-view api="vm.api"></msm-table-view>
+          <msm-table-pagination api="vm.api"></msm-table-pagination>
+        </div>
+        <div class="panel-footer">
+          <a href="" ng-click="vm.api.reload()">Reload</a> |
+          <a href="" ng-click="vm.api.previousPage()">Previous</a> |
+          <a href="" ng-click="vm.api.nextPage()">Next</a>
+        </div>
+      </div>
+    </div>
+
+    <script src="bower_components/angular/angular.js"></script>
+    <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+    <script src="bower_components/angular-click-outside/clickoutside.directive.js"></script>
+    <script src="bower_components/angular-hotkeys/build/hotkeys.js"></script>
+    <script src="bower_components/chance/chance.js"></script>
+    <script src="tmp/mindsmash-table.js"></script>
+    <script src="index.module.js"></script>
+  </body>
+</html>
