@@ -544,25 +544,24 @@ function MsmTable($rootScope, $q, tableName, tableConfig) {
    * @returns {boolean} The visibility.
    */
   function getVisibility(key) {
-    return angular.isDefined(key) ? tState.visibility[key] : tState.visibility;
+    return angular.isDefined(key) ? !!tState.visibility[key] : tState.visibility;
   }
 
   function setVisibility(key, value) {
     var deferred = $q.defer();
     var newVisibility = angular.isDefined(value) ? !!value : !tState.visibility[key];
 
-    var args = {};
-    args[key] = newVisibility;
-
     if (tState.visibility[key] !== newVisibility) {
-      tState.visibility[key] !== newVisibility;
+      tState.visibility[key] = newVisibility;
       deferred.resolve();
     } else {
+      var args = {};
+      args[key] = newVisibility;
       deferred.reject(args);
     }
 
     return deferred.promise.then(function(result) {
-      notify('visibility', args);
+      notify('visibility', tState.visibility);
       return result;
     });
   }
@@ -570,34 +569,24 @@ function MsmTable($rootScope, $q, tableName, tableConfig) {
   // -----------
 
   function getSelection(key) {
-    if (angular.isDefined(key)) {
-      return !!tState.selection[key];
-    }
-    return tState.selection; //TODO
+    return angular.isDefined(key) ? !!tState.selection[key] : tState.selection;
   }
 
   function setSelection(key, value) {
-    console.log(1);
     var deferred = $q.defer();
-    var idx = tState.selection.indexOf(key);
-    var newSelection = angular.isDefined(value) ? !!value : idx === -1;
+    var newSelection = angular.isDefined(value) ? !!value : !tState.selection[key];
 
-    var args = {};
-    args[key] = newSelection;
-
-    if ((idx !== -1) !== newSelection) {
-      if (newSelection) {
-        tState.selection.push(key);
-      } else {
-        tState.selection.splice(idx, 1);
-      }
+    if (tState.selection[key] !== newSelection) {
+      tState.selection[key] = newSelection;
       deferred.resolve();
     } else {
+      var args = {};
+      args[key] = newSelection;
       deferred.reject(args);
     }
 
     return deferred.promise.then(function(result) {
-      notify('selection', args);
+      notify('selection', tState.selection);
       return result;
     });
   }

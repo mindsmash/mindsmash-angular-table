@@ -28,7 +28,7 @@ function msmTableView() {
   };
 }
 
-function ViewController($rootScope, $scope, hotkeys) {
+function ViewController($rootScope, $scope, $filter, hotkeys) {
   var vm = this;
 
   var api = $scope.api();
@@ -37,10 +37,8 @@ function ViewController($rootScope, $scope, hotkeys) {
   // ==========
 
   vm.isLoading = false;
-  vm.cols = cfg.columns;
+  vm.cols = getVisibleCols(cfg.columns, api.getVisibility());
   vm.rows = api.getRows();
-  //vm.cols = getColumnVisibility(cfg.columns, api.getVisibility());
-  //vm.rows = getRowSelection(api.getRows(), api.getSelection());
   vm.orderBy = api.getOrderBy();
   vm.active = api.getActive();
   vm.selection = api.getSelection();
@@ -48,51 +46,15 @@ function ViewController($rootScope, $scope, hotkeys) {
 
   vm.sort = api.setOrderBy;
   vm.activate = api.setActive;
-  vm.select = select;
-  vm.isVisible = isVisible;
+  vm.select = api.setSelection;
 
   // ==========
 
-  function isVisible(key) {
-    return //XXXXXXX
+  function getVisibleCols(columns, visibility) {
+    return $filter('filter')(columns, function(col) {
+      return visibility[col.key];
+    });
   }
-
-  function select(key, $event) {
-    //$event.preventDefault();
-    return api.setSelection(key);
-  }
-
-  /*
-   function getRowSelection(rows, selection) {
-   var result = rows.slice(0);
-   for (var i = 0; i < result.length; i++) {
-   var row = result[i];
-   row.isSelected = selection.indexOf([selectionKey];
-   }
-   }
-
-
-   function getColumnVisibility(columns, visibility) {
-   var result = [];
-   for (var i = 0; i < columns.length; i++) {
-   var column = columns[i];
-   column.isVisible = visibility[column.key];
-   result.push(column);
-   }
-   return result;
-   }
-
-   function updateColumnVisibility(visibility) {
-   for (var key in visibility) {
-   for (var i = 0; i < vm.cols.length; i++) {
-   if (vm.cols[i].key === key) {
-   vm.cols[i].isVisible = visibility[key];
-   break;
-   }
-   }
-   }
-   }
-   */
 
   // TODO: if hotkeys
   hotkeys.bindTo($scope).add({
@@ -150,12 +112,11 @@ function ViewController($rootScope, $scope, hotkeys) {
   });
 
   var rmVisibility = $rootScope.$on(api.getName() + '.visibility', function(event, visibility) {
-    console.log(visibility);
-    //updateColumnVisibility(visibility);
+    vm.cols = getVisibleCols(cfg.columns, visibility);
   });
 
   var rmSelection = $rootScope.$on(api.getName() + '.selection', function(event, selection) {
-    console.log(selection)
+    vm.selection = selection;
   });
 
   $scope.$on('$destroy', rmLoading);

@@ -40,22 +40,16 @@ function ColumnSelectorController($rootScope, $scope) {
   vm.cols = cfg.columns;
   vm.visibility = api.getVisibility();
 
-  vm.select = select;
+  vm.select = api.setVisibility;
 
   // ==========
-
-  function select(key) {
-    api.setVisibility(key);
-  }
-
-  // ----------
 
   var rmLoading = $rootScope.$on(api.getName() + '.loading', function(event, isLoading) {
     vm.isLoading = isLoading;
   });
 
   var rmVisibility = $rootScope.$on(api.getName() + '.visibility', function(event, visibility) {
-    angular.extend(vm.visibility, visibility);
+    vm.visibility = visibility;
   });
 
   $scope.$on('$destroy', rmLoading);
