@@ -1,5 +1,5 @@
 # mindsmash-table
-A AngularJS data table.
+A data table for AngularJS.
 
 ## Usage
 
