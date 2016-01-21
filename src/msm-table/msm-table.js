@@ -30,8 +30,8 @@ function msmTableFactoryProvider(msmTableConfig, $translateProvider) {
     angular.merge(tableConfig, config);
   }
 
-  function $get($rootScope, $q) {
-    return new msmTableFactory($rootScope, $q, tableConfig);
+  function $get($rootScope, $q, $window) {
+    return new msmTableFactory($rootScope, $q, $window, tableConfig);
   }
 }
 
@@ -42,7 +42,7 @@ function msmTableFactoryProvider(msmTableConfig, $translateProvider) {
  * @description
  * TODO
  */
-function msmTableFactory($rootScope, $q, tableConfig) {
+function msmTableFactory($rootScope, $q, $window, tableConfig) {
 
   /**
    * @ngdoc method
@@ -63,7 +63,7 @@ function msmTableFactory($rootScope, $q, tableConfig) {
   // ==========
 
   function get(name, config) {
-    return new MsmTable($rootScope, $q, name, angular.merge(tableConfig, config));
+    return new MsmTable($rootScope, $q, $window, name, angular.merge(tableConfig, config));
   }
 }
 
@@ -74,14 +74,23 @@ function msmTableFactory($rootScope, $q, tableConfig) {
  * @description
  * TODO
  */
-function MsmTable($rootScope, $q, tableName, tableConfig) {
+function MsmTable($rootScope, $q, $window, tableName, tableConfig) {
   var vm = this;
 
   var tName = tableConfig.namespace + '.' + tableName;
   var tCols = tableConfig.columns;
   var tRows = [];
 
-  var tState = {
+  var tStorage = function() {
+    if (tableConfig.storage === 'session') {
+      return sessionStorage;
+    } else if (tableConfig.storage === 'local') {
+      return localStorage;
+    }
+    return null;
+  }();
+
+  var tState = angular.extend({
     active: tableConfig.active,
     page: tableConfig.page,
     pageSize: tableConfig.pageSizes[0],
@@ -95,7 +104,7 @@ function MsmTable($rootScope, $q, tableName, tableConfig) {
       }
       return result;
     }()
-  };
+  }, loadState());
 
   // ==========
 
@@ -183,7 +192,7 @@ function MsmTable($rootScope, $q, tableName, tableConfig) {
 
   function reload() {
     notify('loading', true);
-    return tableConfig.source(getParams()).then(function(response) {
+    return tableConfig.source(tableConfig.onBeforeLoad(getParams())).then(function(response) {
       response = tableConfig.onAfterLoad(response);
 
       /* refresh content */
@@ -216,6 +225,23 @@ function MsmTable($rootScope, $q, tableName, tableConfig) {
     }).finally(function() {
       notify('loading', false);
     });
+  }
+
+  // ----------- Storage
+
+  function loadState() {
+    var data = tStorage !== null ? tStorage[tName] : null;
+    return data ? JSON.parse(data) : {};
+  }
+
+  function saveState() {
+    if (tStorage !== null) {
+      tStorage[tName] = JSON.stringify({
+        page: tState.page,
+        pageSize: tState.pageSize,
+        orderBy: tState.orderBy
+      });
+    }
   }
 
   // ----------- Pagination
@@ -257,7 +283,7 @@ function MsmTable($rootScope, $q, tableName, tableConfig) {
     }
 
     return deferred.promise.then(function(result) {
-      notify('page', newPage);
+      saveAndNotify('page', newPage);
       return result;
     });
   }
@@ -355,7 +381,7 @@ function MsmTable($rootScope, $q, tableName, tableConfig) {
     }
 
     return deferred.promise.then(function(result) {
-      notify('pageSize', newPageSize);
+      saveAndNotify('pageSize', newPageSize);
       return result;
     });
   }
@@ -420,7 +446,7 @@ function MsmTable($rootScope, $q, tableName, tableConfig) {
     }
 
     return deferred.promise.then(function(result) {
-      notify('orderBy', newOrderBy);
+      saveAndNotify('orderBy', newOrderBy);
       return result;
     });
   }
@@ -650,4 +676,8 @@ function MsmTable($rootScope, $q, tableName, tableConfig) {
     $rootScope.$emit(tName + '.' + key, data);
   }
 
+  function saveAndNotify(key, data) {
+    notify(key, data);
+    saveState();
+  }
 }

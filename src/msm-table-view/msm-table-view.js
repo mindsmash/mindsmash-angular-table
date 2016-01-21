@@ -70,7 +70,7 @@ function ViewController($rootScope, $scope, $filter, hotkeys) {
   }
 
   function onAction(event) {
-    return cfg.onAction(vm.rows[api.getActive()]);
+    return cfg.onAction(vm.rows[api.getActive()], event);
   }
 
   hotkeys.bindTo($scope).add({

@@ -11,5 +11,6 @@ angular
       onBeforeLoad: angular.identity,
       onAfterLoad: angular.identity,
       selection: 'id',
-      orderBy: null
+      orderBy: null,
+      storage: 'session'
     });

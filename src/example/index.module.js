@@ -25,11 +25,19 @@
 
       .run()
 
-      .controller('AppController', function($filter, $q, $timeout, msmTableFactory) {
+      .controller('AppController', function($filter, $q, $timeout, $log, msmTableFactory) {
         var vm = this;
 
         vm.api = msmTableFactory.get('table', {
           source: source,
+          onBeforeLoad: function(params) {
+            $log.debug("Request:", params);
+            return params;
+          },
+          onAfterLoad: function(data) {
+            $log.debug("Response:", data);
+            return data;
+          },
           columns: [
             { key: 'id', name: 'id', isHidden: true },
             { key: 'firstName', name: 'firstName', isSticky: true, isSortable: false },
@@ -46,16 +54,14 @@
 
         // ==========
 
-        var data = generate(155);
-        var sort = $filter('orderBy');
+        var data = generate(55);
 
         function source(params) {
-          console.log('Requesting with params', params);
           return $q(function(resolve, reject) {
             $timeout(function() {
               var from = params.page * params.pageSize;
               var to = from + params.pageSize;
-              var items = params.orderBy ? sort(data, params.orderBy, !params.orderAsc) : data;
+              var items = params.orderBy ? $filter('orderBy')(data, params.orderBy, !params.orderAsc) : data;
               items = items.slice(from, to);
               resolve({
                 content: items,
@@ -66,7 +72,7 @@
                 totalElements: data.length,
                 totalPages: Math.ceil(data.length / params.pageSize)
               });
-            }, 100);
+            }, 250);
           });
         }
 
@@ -88,6 +94,5 @@
           }
           return result;
         }
-
       });
 })(angular);
