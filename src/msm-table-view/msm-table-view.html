@@ -1,22 +1,35 @@
-<table class="table msm-table-view" id="tester" click-outside="vm.activate(null)">
-  <thead>
-    <tr>
-      <th class="msm-table-selector-all"></th>
-      <th ng-repeat="col in vm.cols | filter : vm.visibility[col.key]"
-          ng-class="{ 'sort': vm.orderBy.key === col.key, 'sort-asc': vm.orderBy.key === col.key && vm.orderBy.asc === true, 'sort-desc': vm.orderBy.key === col.key && vm.orderBy.asc === false }"
-          ng-click="vm.sort(col.key)">{{ col.name }}
-      </th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr ng-repeat="row in vm.rows"
-        ng-class="{ 'msm-table-isActive': vm.active === $index, 'msm-table-isSelected': vm.selection[row.id] }"
-        ng-click="vm.activate($index)">
-      <td class="msm-table-selector"
-          ng-click="vm.select(row[vm.selectionKey])"></td>
-      <td ng-repeat="col in vm.cols | filter : vm.visibility[col.key]"
-          msm-table-view-cell>{{ row[col.key] }}
-      </td>
-    </tr>
-  </tbody>
-</table>
+<div>
+  <table class="table msm-table-view" id="tester" click-outside="vm.clearActive()">
+    <thead>
+      <tr>
+        <th class="msm-table-selector-all"
+            ng-show="vm.selectionEnabled"></th>
+        <th ng-repeat="col in vm.cols | filter : vm.visibility[col.key]"
+            ng-class="{
+              'msm-table-isSortable': vm.activeOrderBy,
+              'msm-table-isSorted': vm.orderBy.key === col.key,
+              'msm-table-isSortedAsc': vm.orderBy.key === col.key && vm.orderBy.asc === true,
+              'msm-table-isSortedDesc': vm.orderBy.key === col.key && vm.orderBy.asc === false }"
+            ng-click="vm.activeOrderBy && vm.setOrderBy(col.key)">{{ col.name }}
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="row in vm.rows"
+          ng-class="{ 'msm-table-isActive': vm.active === $index, 'msm-table-isSelected': vm.selection[row.id] }"
+          ng-click="vm.activeEnabled && vm.setActive($index)">
+        <td class="msm-table-selector"
+            ng-show="vm.selectionEnabled"
+            ng-click="vm.setSelection(row[vm.selectionKey])"></td>
+        <td ng-repeat="col in vm.cols | filter : vm.visibility[col.key]"
+            data-label="{{ col.name }}"
+            msm-table-view-cell>{{ row[col.key] }}
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <ol start="0">
+    <li ng-repeat="row in vm.rows" ng-include="'templates/row.mobile.html'"></li>
+  </ol>
+</div>

@@ -21,7 +21,8 @@
     'ui.bootstrap.pagination',
     'ui.bootstrap.tpls',
     'angular-click-outside',
-    'cfp.hotkeys'
+    'cfp.hotkeys',
+    'matchMedia'
   ]);
 
 })(angular);

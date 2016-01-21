@@ -13,16 +13,16 @@
         vm.api = msmTableFactory.get('table', {
           source: source,
           columns: [
-            { key: 'id', name: 'ID' },
-            { key: 'firstName', name: 'First Name', hidden: true },
-            { key: 'lastName', name: 'Last Name' },
+            { key: 'id', name: 'ID', isHidden: true },
+            { key: 'firstName', name: 'First Name', isSticky: true, isSortable: false },
+            { key: 'lastName', name: 'Last Name', isSticky: true },
             { key: 'age', name: 'Age', template: '{{ row.age }} yrs' },
             { key: 'birthday', name: 'Birthday', templateUrl: 'templates/cell.birthday.html' },
-            { key: 'address', name: 'Address' },
-            { key: 'city', name: 'City' },
-            { key: 'country', name: 'Country' },
-            { key: 'phone', name: 'Phone' },
-            { key: 'about', name: 'About' }]
+            { key: 'address', name: 'Address', isHidden: true },
+            { key: 'city', name: 'City', isHidden: true },
+            { key: 'country', name: 'Country', isHidden: true },
+            { key: 'phone', name: 'Phone', isHidden: true },
+            { key: 'about', name: 'About', isHidden: true }]
         });
         vm.api.reload();
 

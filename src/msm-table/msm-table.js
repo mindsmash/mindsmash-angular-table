@@ -75,18 +75,19 @@ function MsmTable($rootScope, $q, tableName, tableConfig) {
   var tRows = [];
 
   var tState = {
-    active: null,
-    page: 0,
-    pageSize: 10,
+    active: tableConfig.active,
+    page: tableConfig.page,
+    pageSize: tableConfig.pageSizes[0],
     itemCount: 100, // should be named RowCount
-    orderBy: null,
+    orderBy: tableConfig.orderBy,
     selection: {},
-    visibility: { //TODO: init
-      firstName: true,
-      lastName: true,
-      age: true,
-      birthday: true
-    }
+    visibility: function init() {
+      var result = {};
+      for (var i = 0; i < tCols.length; i++) {
+        result[tCols[i].key] = !tCols[i].isHidden;
+      }
+      return result;
+    }()
   };
 
   // ==========
@@ -109,23 +110,33 @@ function MsmTable($rootScope, $q, tableName, tableConfig) {
   vm.getPageSize = getPageSize;
   vm.setPageSize = setPageSize;
 
-  vm.getOrderBy = getOrderBy;
-  vm.setOrderBy = setOrderBy;
+  if (tableConfig.orderBy !== false) {
+    vm.getOrderBy = getOrderBy;
+    vm.setOrderBy = setOrderBy;
+    vm.clearOrderBy = clearOrderBy;
+  }
 
-  vm.getActive = getActive;
-  vm.getActiveRow = getActiveRow;
-  vm.setActive = setActive;
-  vm.firstActive = firstActive;
-  vm.previousActive = previousActive;
-  vm.nextActive = nextActive;
-  vm.lastActive = lastActive;
+  if (tableConfig.active !== false) {
+    vm.getActive = getActive;
+    vm.setActive = setActive;
+    vm.firstActive = firstActive;
+    vm.previousActive = previousActive;
+    vm.nextActive = nextActive;
+    vm.lastActive = lastActive;
+    vm.clearActive = clearActive;
+  }
 
   vm.getVisibility = getVisibility;
   vm.setVisibility = setVisibility;
 
-  vm.getSelection = getSelection;
-  vm.setSelection = setSelection;
-  vm.setActiveSelection = setActiveSelection;
+  if (tableConfig.selection !== false) {
+    vm.getSelection = getSelection;
+    vm.setSelection = setSelection;
+    vm.clearSelection = clearSelection;
+    if (tableConfig.active !== false) {
+      vm.setActiveSelection = setActiveSelection;
+    }
+  }
 
   // ==========
 
@@ -407,6 +418,10 @@ function MsmTable($rootScope, $q, tableName, tableConfig) {
     });
   }
 
+  function clearOrderBy() {
+    return setOrderBy(null);
+  }
+
   // ----------- Active Row
 
   /**
@@ -421,10 +436,6 @@ function MsmTable($rootScope, $q, tableName, tableConfig) {
    */
   function getActive() {
     return tState.active;
-  }
-
-  function getActiveRow() {
-    return tState.active !== null ? tRows[tState.active] : null;
   }
 
   /**
@@ -475,6 +486,10 @@ function MsmTable($rootScope, $q, tableName, tableConfig) {
     });
   }
 
+  function clearActive() {
+    return setActive(null);
+  }
+
   /**
    * @ngdoc method
    * @name firstActive
@@ -486,7 +501,7 @@ function MsmTable($rootScope, $q, tableName, tableConfig) {
    * @returns {Promise} A table resource promise.
    */
   function firstActive() {
-    setActive(0)
+    setActive(tState.active !== null ? 0 : tRows.length - 1)
   }
 
   /**
@@ -500,7 +515,7 @@ function MsmTable($rootScope, $q, tableName, tableConfig) {
    * @returns {Promise} A table resource promise.
    */
   function previousActive() {
-    setActive(tState.active - 1);
+    setActive(tState.active !== null ? tState.active - 1 : 0);
   }
 
   /**
@@ -514,7 +529,7 @@ function MsmTable($rootScope, $q, tableName, tableConfig) {
    * @returns {Promise} A table resource promise.
    */
   function nextActive() {
-    setActive(tState.active + 1);
+    setActive(tState.active !== null ? tState.active + 1 : 0);
   }
 
   /**
@@ -528,7 +543,7 @@ function MsmTable($rootScope, $q, tableName, tableConfig) {
    * @returns {Promise} A table resource promise.
    */
   function lastActive() {
-    setActive(tRows.length - 1);
+    setActive(tState.active !== null ? tRows.length - 1 : 0)
   }
 
   // ----------- Column Visibility
@@ -595,12 +610,27 @@ function MsmTable($rootScope, $q, tableName, tableConfig) {
   function setActiveSelection(value) {
     var deferred = $q.defer();
 
-    var activeRow = getActiveRow();
-    if (activeRow !== null) {
-      return setSelection(activeRow.id, value);
+    if (tState.active !== null) {
+      return setSelection(tRows[tState.active][tableConfig.selection], value);
     } else {
       deferred.reject(value);
     }
+  }
+
+  function clearSelection() {
+    var deferred = $q.defer();
+
+    if (tState.selection !== {}) {
+      tState.selection = {};
+      deferred.resolve();
+    } else {
+      deferred.reject();
+    }
+
+    return deferred.promise.then(function(result) {
+      notify('selection', tState.selection);
+      return result;
+    });
   }
 
   // ----------- Helpers

@@ -44,9 +44,21 @@ function ColumnSelectorController($rootScope, $scope) {
 
   // ==========
 
-  function select(columnKey, event) {
+  function select(key, event) {
     event.preventDefault();
-    api.setVisibility(columnKey);
+
+    var toggleable = !vm.visibility[key];
+    if (!toggleable) {
+      var vKeys = Object.keys(vm.visibility);
+      while (!toggleable && vKeys.length > 0) {
+        var vKey = vKeys.shift();
+        toggleable = vKey !== key && vm.visibility[vKey];
+      }
+    }
+
+    if (toggleable) {
+      return api.setVisibility(key);
+    }
   }
 
   var rmLoading = $rootScope.$on(api.getName() + '.loading', function(event, isLoading) {

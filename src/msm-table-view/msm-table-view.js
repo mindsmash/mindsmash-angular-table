@@ -39,14 +39,27 @@ function ViewController($rootScope, $scope, $filter, hotkeys) {
   vm.isLoading = false;
   vm.cols = getVisibleCols(cfg.columns, api.getVisibility());
   vm.rows = api.getRows();
-  vm.orderBy = api.getOrderBy();
-  vm.active = api.getActive();
-  vm.selection = api.getSelection();
-  vm.selectionKey = cfg.selection.key;
 
-  vm.sort = api.setOrderBy;
-  vm.activate = api.setActive;
-  vm.select = api.setSelection;
+  vm.activeOrderBy = cfg.orderBy !== false;
+  if (vm.activeOrderBy) {
+    vm.orderBy = api.getOrderBy();
+    vm.setOrderBy = api.setOrderBy;
+  }
+
+  vm.activeEnabled = cfg.active !== false;
+  if (vm.activeEnabled) {
+    vm.active = api.getActive();
+    vm.setActive = api.setActive;
+    vm.clearActive = api.clearActive;
+  }
+
+  vm.selectionEnabled = cfg.selection !== false;
+  if (vm.selectionEnabled) {
+    vm.selectionKey = cfg.selection;
+    vm.selection = api.getSelection();
+    vm.setSelection = api.setSelection;
+    vm.clearSelection = api.clearSelection;
+  }
 
   // ==========
 
@@ -56,7 +69,10 @@ function ViewController($rootScope, $scope, $filter, hotkeys) {
     });
   }
 
-  // TODO: if hotkeys
+  function onAction(event) {
+    return cfg.onAction(vm.rows[api.getActive()]);
+  }
+
   hotkeys.bindTo($scope).add({
     combo: 'shift+left',
     callback: replaceDefault(api.firstPage)
@@ -71,28 +87,48 @@ function ViewController($rootScope, $scope, $filter, hotkeys) {
     callback: replaceDefault(api.lastPage)
   });
 
-  // TODO: if hotkeys && selection
-  hotkeys.bindTo($scope).add({
-    combo: 'shift+up',
-    callback: replaceDefault(api.firstActive)
-  }).add({
-    combo: 'up',
-    callback: replaceDefault(api.previousActive)
-  }).add({
-    combo: 'down',
-    callback: replaceDefault(api.nextActive)
-  }).add({
-    combo: 'shift+down',
-    callback: replaceDefault(api.lastActive)
-  }).add({
-    combo: 'space',
-    callback: replaceDefault(api.setActiveSelection)
-  });
+  if (vm.activeEnabled) {
+    hotkeys.bindTo($scope).add({
+      combo: 'shift+up',
+      callback: replaceDefault(api.firstActive)
+    }).add({
+      combo: 'up',
+      callback: replaceDefault(api.previousActive, true)
+    }).add({
+      combo: 'down',
+      callback: replaceDefault(api.nextActive, true)
+    }).add({
+      combo: 'shift+down',
+      callback: replaceDefault(api.lastActive)
+    }).add({
+      combo: 'esc',
+      callback: api.clearActive
+    }).add({
+      combo: 'return',
+      callback: replaceDefault(onAction, true)
+    });
+  }
 
-  function replaceDefault(callback) {
+  if (vm.selectionEnabled) {
+    hotkeys.bindTo($scope).add({
+      combo: 'shift+esc',
+      callback: api.clearSelection
+    });
+  }
+
+  if (vm.activeEnabled && vm.selectionEnabled) {
+    hotkeys.bindTo($scope).add({
+      combo: 'space',
+      callback: replaceDefault(api.setActiveSelection)
+    });
+  }
+
+  function replaceDefault(callback, iffActive) {
     return function(event) {
-      event.preventDefault();
-      callback();
+      if (!iffActive || api.getActive() !== null) {
+        event.preventDefault();
+        callback();
+      }
     };
   }
 

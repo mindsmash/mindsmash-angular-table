@@ -2,26 +2,27 @@
 
   // ----------- Sorting
 
-  th {
+  th.msm-table-isSortable {
     cursor: pointer;
-  }
 
-  .sort::after {
-    color: #777;
-    display: inline-block;
-    font: normal normal normal 14px/1 'Material-Design-Iconic-Font';
-    font-size: inherit;
-    text-align: center;
-    text-rendering: auto;
-    width: 14px;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-  .sort-asc::after {
-    content: '\f1cf';
-  }
-  .sort-desc::after {
-    content: '\f1d0';
+    &.msm-table-isSorted::after {
+      color: #777;
+      display: inline-block;
+      font: normal normal normal 14px/1 'Material-Design-Iconic-Font';
+      font-size: inherit;
+      text-align: center;
+      text-rendering: auto;
+      width: 14px;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    &.msm-table-isSortedAsc::after {
+      content: '\f1cf';
+    }
+    &.msm-table-isSortedDesc::after {
+      content: '\f1d0';
+    }
   }
 
   // ----------- Active Row & Row Selection
@@ -56,5 +57,44 @@
   .msm-table-isSelected > a {
     border-left: 4px solid #286090;
     padding-left: 16px;
+  }
+}
+
+// ----------- Mobile
+
+@media screen and (max-width: 1000px) {
+  .msm-table-view {
+    thead,
+    .msm-table-selector,
+    .msm-table-selector-all {
+      display: none;
+    }
+
+    tr {
+      border-top: 1px solid #ddd;
+      border-bottom: 1px solid #ddd;
+      display: block;
+      margin-bottom: 16px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+
+    > tbody > tr > td {
+      border-top: 1px dotted #ddd;
+      display: block;
+      text-align: right;
+
+      &:nth-child(2) {
+        border-top: none;
+      }
+    }
+
+    td:before {
+      content: attr(data-label);
+      float: left;
+      font-weight: bold;
+    }
   }
 }
