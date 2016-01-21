@@ -30,6 +30,9 @@
 
         vm.api = msmTableFactory.get('table', {
           source: source,
+          onAction: function(data, event) {
+            $log.debug("Action:", data);
+          },
           onBeforeLoad: function(params) {
             $log.debug("Request:", params);
             return params;
