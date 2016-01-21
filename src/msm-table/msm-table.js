@@ -154,6 +154,10 @@ function MsmTable($rootScope, $q, $window, tableName, tableConfig) {
     }
   }
 
+  // ----------
+
+  vm.reload();
+
   // ==========
 
   function getConfig() {

@@ -50,7 +50,6 @@
             { key: 'phone', name: 'phone', isHidden: true },
             { key: 'about', name: 'about', isHidden: true }]
         });
-        vm.api.reload();
 
         // ==========
 
