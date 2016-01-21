@@ -1,15 +1,15 @@
 angular
     .module('mindsmash-table')
-    .provider('msmTableFactory', msmTableFactoryProvider);
+    .provider('MsmTableFactory', MsmTableFactoryProvider);
 
 /**
  * @ngdoc service
- * @name mindsmash-table.msmTableFactoryProvider
+ * @name mindsmash-table.MsmTableFactoryProvider
  *
  * @description
  * TODO
  */
-function msmTableFactoryProvider(msmTableConfig, $translateProvider) {
+function MsmTableFactoryProvider(msmTableConfig, $translateProvider) {
   var tableConfig = msmTableConfig;
 
   $translateProvider.translations('en', {
@@ -31,30 +31,30 @@ function msmTableFactoryProvider(msmTableConfig, $translateProvider) {
   }
 
   function $get($rootScope, $q, $window) {
-    return new msmTableFactory($rootScope, $q, $window, tableConfig);
+    return new MsmTableFactory($rootScope, $q, $window, tableConfig);
   }
 }
 
 /**
  * @ngdoc service
- * @name mindsmash-table.msmTableFactory
+ * @name mindsmash-table.MsmTableFactory
  *
  * @description
  * TODO
  */
-function msmTableFactory($rootScope, $q, $window, tableConfig) {
+function MsmTableFactory($rootScope, $q, $window, tableConfig) {
 
   /**
    * @ngdoc method
    * @name get
-   * @methodOf mindsmash-table.msmTableFactory
+   * @methodOf mindsmash-table.MsmTableFactory
    *
    * @description
    * Returns a new {@link mindsmash-table.MsmTable MsmTable} API instance to be used with *msmTable*-directives.
    *
    * @param {string} name The table's unique identifier.
    * @param {Object} config The table's configuration.
-   * @returns {API} A {@link mindsmash-table.MsmTable MsmTable} API instance.
+   * @returns {Object} A {@link mindsmash-table.MsmTable MsmTable} API instance.
    */
   return {
     get: get
@@ -72,6 +72,12 @@ function msmTableFactory($rootScope, $q, $window, tableConfig) {
  * @name mindsmash-table.MsmTable
  *
  * @description
+ * TODO
+ *
+ * #Configuration
+ * TODO
+ *
+ * #Events
  * TODO
  */
 function MsmTable($rootScope, $q, $window, tableName, tableConfig) {
@@ -194,6 +200,16 @@ function MsmTable($rootScope, $q, $window, tableName, tableConfig) {
     return params;
   }
 
+  /**
+   * @ngdoc method
+   * @name reload
+   * @methodOf mindsmash-table.MsmTable
+   *
+   * @description
+   * Reloads the data of the table.
+   *
+   * @returns {Promise} A table resource promise.
+   */
   function reload() {
     notify('loading', true);
     return tableConfig.source(tableConfig.onBeforeLoad(getParams())).then(function(response) {
@@ -212,11 +228,13 @@ function MsmTable($rootScope, $q, $window, tableName, tableConfig) {
         //TODO: orderBy
       };
       for (var remoteKey in mappings) {
-        var localKey = mappings[remoteKey];
-        var remoteValue = response[remoteKey]
-        if (tState[localKey] !== remoteValue) {
-          tState[localKey] = remoteValue;
-          notify(localKey, remoteValue);
+        if (mappings.hasOwnProperty(remoteKey)) {
+          var localKey = mappings[remoteKey];
+          var remoteValue = response[remoteKey];
+          if (tState[localKey] !== remoteValue) {
+            tState[localKey] = remoteValue;
+            notify(localKey, remoteValue);
+          }
         }
       }
 
@@ -455,6 +473,16 @@ function MsmTable($rootScope, $q, $window, tableName, tableConfig) {
     });
   }
 
+  /**
+   * @ngdoc method
+   * @name clearOrderBy
+   * @methodOf mindsmash-table.MsmTable
+   *
+   * @description
+   * Shortcut method to clear the current sort order.
+   *
+   * @returns {Promise} A table resource promise.
+   */
   function clearOrderBy() {
     return setOrderBy(null);
   }
@@ -523,10 +551,6 @@ function MsmTable($rootScope, $q, $window, tableName, tableConfig) {
     });
   }
 
-  function clearActive() {
-    return setActive(null);
-  }
-
   /**
    * @ngdoc method
    * @name firstActive
@@ -583,6 +607,20 @@ function MsmTable($rootScope, $q, $window, tableName, tableConfig) {
     setActive(tState.active !== null ? tRows.length - 1 : 0)
   }
 
+  /**
+   * @ngdoc method
+   * @name clearActive
+   * @methodOf mindsmash-table.MsmTable
+   *
+   * @description
+   * Shortcut method to clear the current active row.
+   *
+   * @returns {Promise} A table resource promise.
+   */
+  function clearActive() {
+    return setActive(null);
+  }
+
   // ----------- Column Visibility
 
   /**
@@ -591,15 +629,31 @@ function MsmTable($rootScope, $q, $window, tableName, tableConfig) {
    * @methodOf mindsmash-table.MsmTable
    *
    * @description
-   * TODO
+   * Returns the visibility of the column with the given `key` or the visibility of all columns.
    *
    * @param {string=} key The column's key.
-   * @returns {boolean} The visibility.
+   * @returns {boolean|Object} The visibility.
    */
   function getVisibility(key) {
     return angular.isDefined(key) ? !!tState.visibility[key] : tState.visibility;
   }
 
+  /**
+   * @ngdoc method
+   * @name setVisibility
+   * @methodOf mindsmash-table.MsmTable
+   *
+   * @description
+   * Toggles or sets the visibility of the column with the given key. The visibility is set according to the following
+   * rules:
+   *
+   * - **toggle** (rotate visibility), if the `value` parameter is omitted.
+   * - **set** (spec. visibility), if the `value` is explicitly set.
+   *
+   * @param {string=} key The column's key.
+   * @param {boolean=} value The new visibility value.
+   * @returns {Promise} A table resource promise.
+   */
   function setVisibility(key, value) {
     var deferred = $q.defer();
     var newVisibility = angular.isDefined(value) ? !!value : !tState.visibility[key];
@@ -621,10 +675,37 @@ function MsmTable($rootScope, $q, $window, tableName, tableConfig) {
 
   // ----------- Row Selection
 
+  /**
+   * @ngdoc method
+   * @name getSelection
+   * @methodOf mindsmash-table.MsmTable
+   *
+   * @description
+   * Returns the selection of the column with the given `key` or the selection of all columns.
+   *
+   * @param {string=} key The column's key.
+   * @returns {boolean|Object} The selection.
+   */
   function getSelection(key) {
     return angular.isDefined(key) ? !!tState.selection[key] : tState.selection;
   }
 
+  /**
+   * @ngdoc method
+   * @name setSelection
+   * @methodOf mindsmash-table.MsmTable
+   *
+   * @description
+   * Toggles or sets the selection of the column with the given key. The selection is set according to the following
+   * rules:
+   *
+   * - **toggle** (rotate selection), if the `value` parameter is omitted.
+   * - **set** (spec. selection), if the `value` is explicitly set.
+   *
+   * @param {string=} key The column's key.
+   * @param {boolean=} value The new selection value.
+   * @returns {Promise} A table resource promise.
+   */
   function setSelection(key, value) {
     var deferred = $q.defer();
     var newSelection = angular.isDefined(value) ? !!value : !tState.selection[key];
@@ -644,6 +725,16 @@ function MsmTable($rootScope, $q, $window, tableName, tableConfig) {
     });
   }
 
+  /**
+   * @ngdoc method
+   * @name setActiveSelection
+   * @methodOf mindsmash-table.MsmTable
+   *
+   * @description
+   * Shortcut method to set the selection for the activate row.
+   *
+   * @returns {Promise} A table resource promise.
+   */
   function setActiveSelection(value) {
     var deferred = $q.defer();
 
@@ -654,6 +745,16 @@ function MsmTable($rootScope, $q, $window, tableName, tableConfig) {
     }
   }
 
+  /**
+   * @ngdoc method
+   * @name clearSelection
+   * @methodOf mindsmash-table.MsmTable
+   *
+   * @description
+   * Shortcut method to clear the selection.
+   *
+   * @returns {Promise} A table resource promise.
+   */
   function clearSelection() {
     var deferred = $q.defer();
 

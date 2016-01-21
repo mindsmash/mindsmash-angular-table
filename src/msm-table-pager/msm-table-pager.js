@@ -13,7 +13,9 @@ angular
  * previous/next paging functionality.
  *
  * # Configuration
- * TODO
+ * This directive is configured via the {@link mindsmash-table.MsmTable MsmTable} API instance or the default parameters
+ * set in the {@link mindsmash-table.MsmTableFactoryProvider MsmTableFactoryProvider}. Valid configuration values are
+ * described in the {@link mindsmash-table.MsmTable#configuration configuration section}.
  *
  * @param {expression} api A {@link mindsmash-table.MsmTable MsmTable} API instance.
  */
