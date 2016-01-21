@@ -10,7 +10,8 @@
               'msm-table-isSorted': vm.orderBy.key === col.key,
               'msm-table-isSortedAsc': vm.orderBy.key === col.key && vm.orderBy.asc === true,
               'msm-table-isSortedDesc': vm.orderBy.key === col.key && vm.orderBy.asc === false }"
-            ng-click="vm.activeOrderBy && vm.setOrderBy(col.key)">{{ col.name }}
+            ng-click="vm.activeOrderBy && vm.setOrderBy(col.key)"
+            translate="{{ col.name }}">
         </th>
       </tr>
     </thead>

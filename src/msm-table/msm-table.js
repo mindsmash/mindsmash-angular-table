@@ -9,8 +9,15 @@ angular
  * @description
  * TODO
  */
-function msmTableFactoryProvider(msmTableConfig) {
+function msmTableFactoryProvider(msmTableConfig, $translateProvider) {
   var tableConfig = msmTableConfig;
+
+  $translateProvider.translations('en', {
+    'msmTable.pagination.previous': '«',
+    'msmTable.pagination.next': '»',
+    'msmTable.pager.previous': '« Previous',
+    'msmTable.pager.next': 'Next »'
+  });
 
   return {
     setTableConfig: defaultTableConfig,

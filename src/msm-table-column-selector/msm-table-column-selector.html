@@ -4,7 +4,7 @@
   </button>
   <ul uib-dropdown-menu role="menu">
     <li ng-repeat="col in vm.cols" role="menuitem" ng-class="{ 'disabled': col.isSticky, 'msm-table-isSelected': vm.visibility[col.key] }">
-      <a href="#" ng-click="!col.isSticky && vm.select(col.key, $event)">{{ col.name }}</a>
+      <a href="#" ng-click="!col.isSticky && vm.select(col.key, $event)" translate="{{ col.name }}"></a>
     </li>
   </ul>
 </div>

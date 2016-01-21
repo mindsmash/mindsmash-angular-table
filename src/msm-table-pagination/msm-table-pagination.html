@@ -1,6 +1,10 @@
 <uib-pagination
-  ng-model="vm.page"
-  total-items="vm.itemCount"
-  items-per-page="vm.pageSize"
-  ng-disabled="vm.isLoading"
+    ng-model="vm.page"
+    total-items="vm.itemCount"
+    items-per-page="vm.pageSize"
+    ng-disabled="vm.isLoading"
+    previous-text="{{ 'msmTable.pagination.previous' | translate }}"
+    next-text="{{ 'msmTable.pagination.next' | translate }}"
+    rotate="true"
+    max-size="5"
 ></uib-pagination>

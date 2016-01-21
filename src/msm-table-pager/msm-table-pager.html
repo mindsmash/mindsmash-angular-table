@@ -1,6 +1,8 @@
 <uib-pager
-  ng-model="vm.page"
-  total-items="vm.itemCount"
-  items-per-page="vm.pageSize"
-  ng-disabled="vm.isLoading"
+    ng-model="vm.page"
+    total-items="vm.itemCount"
+    items-per-page="vm.pageSize"
+    ng-disabled="vm.isLoading"
+    previous-text="{{ 'msmTable.pager.previous' | translate }}"
+    next-text="{{ 'msmTable.pager.next' | translate }}"
 ></uib-pager>

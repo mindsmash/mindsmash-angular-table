@@ -22,7 +22,8 @@
     'ui.bootstrap.tpls',
     'angular-click-outside',
     'cfp.hotkeys',
-    'matchMedia'
+    'matchMedia',
+    'pascalprecht.translate'
   ]);
 
 })(angular);

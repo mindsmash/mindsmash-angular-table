@@ -2,8 +2,26 @@
   'use strict';
 
   angular.module('app', [
-        'mindsmash-table'
+        'mindsmash-table',
+        'pascalprecht.translate'
       ])
+
+      .config(function($translateProvider) {
+        $translateProvider.useSanitizeValueStrategy(null);
+        $translateProvider.preferredLanguage('en');
+        $translateProvider.translations('en', {
+          'id': 'ID',
+          'firstName': 'First Name',
+          'lastName': 'Last Name',
+          'age': 'Age',
+          'birthday': 'Birthday',
+          'address': 'Address',
+          'city': 'City',
+          'country': 'Country',
+          'phone': 'Phone',
+          'about': 'About'
+        });
+      })
 
       .run()
 
@@ -13,22 +31,22 @@
         vm.api = msmTableFactory.get('table', {
           source: source,
           columns: [
-            { key: 'id', name: 'ID', isHidden: true },
-            { key: 'firstName', name: 'First Name', isSticky: true, isSortable: false },
-            { key: 'lastName', name: 'Last Name', isSticky: true },
-            { key: 'age', name: 'Age', template: '{{ row.age }} yrs' },
-            { key: 'birthday', name: 'Birthday', templateUrl: 'templates/cell.birthday.html' },
-            { key: 'address', name: 'Address', isHidden: true },
-            { key: 'city', name: 'City', isHidden: true },
-            { key: 'country', name: 'Country', isHidden: true },
-            { key: 'phone', name: 'Phone', isHidden: true },
-            { key: 'about', name: 'About', isHidden: true }]
+            { key: 'id', name: 'id', isHidden: true },
+            { key: 'firstName', name: 'firstName', isSticky: true, isSortable: false },
+            { key: 'lastName', name: 'lastName', isSticky: true },
+            { key: 'age', name: 'age', template: '{{ row.age }} yrs' },
+            { key: 'birthday', name: 'birthday', templateUrl: 'templates/cell.birthday.html' },
+            { key: 'address', name: 'address', isHidden: true },
+            { key: 'city', name: 'city', isHidden: true },
+            { key: 'country', name: 'country', isHidden: true },
+            { key: 'phone', name: 'phone', isHidden: true },
+            { key: 'about', name: 'about', isHidden: true }]
         });
         vm.api.reload();
 
         // ==========
 
-        var data = generate(55);
+        var data = generate(155);
         var sort = $filter('orderBy');
 
         function source(params) {
