@@ -1,13 +1,15 @@
 {
   "name": "mindsmash-table",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "A data table for AngularJS.",
   "license": "MIT",
   "author": "mindsmash GmbH",
-  "contributors": [{
-    "name": "Fynn feldpausch",
-    "email": "fynn.feldpausch@mindsmash.com"
-  }],
+  "contributors": [
+    {
+      "name": "Fynn feldpausch",
+      "email": "fynn.feldpausch@mindsmash.com"
+    }
+  ],
   "keywords": [],
   "main": "mindsmash-table.js",
   "scripts": {
