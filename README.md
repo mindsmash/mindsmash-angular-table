@@ -1,6 +1,8 @@
 # mindsmash-table
 A data table for AngularJS.
 
+## Installation
+
 ## Usage
 
 ## API
