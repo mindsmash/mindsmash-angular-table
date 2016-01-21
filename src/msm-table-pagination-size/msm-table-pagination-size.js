@@ -44,7 +44,8 @@ function PaginationSizeController($rootScope, $scope) {
 
   // ==========
 
-  function select(pageSize) {
+  function select(pageSize, event) {
+    event.preventDefault();
     api.setPageSize(pageSize);
   }
 

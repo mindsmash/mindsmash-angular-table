@@ -14,15 +14,15 @@
           source: source,
           columns: [
             { key: 'id', name: 'ID' },
-            { key: 'firstName', name: 'First Name' },
+            { key: 'firstName', name: 'First Name', hidden: true },
             { key: 'lastName', name: 'Last Name' },
-            { key: 'age', name: 'Age' },
-            { key: 'birthday', name: 'Birthday', template: '{{ row.birthday | date }}' }
-            /* { key: 'address', name: 'Address' },
-             { key: 'city', name: 'City' },
-             { key: 'country', name: 'Country' },
-             { key: 'phone', name: 'Phone' },
-             { key: 'about', name: 'About' }*/]
+            { key: 'age', name: 'Age', template: '{{ row.age }} yrs' },
+            { key: 'birthday', name: 'Birthday', templateUrl: 'templates/cell.birthday.html' },
+            { key: 'address', name: 'Address' },
+            { key: 'city', name: 'City' },
+            { key: 'country', name: 'Country' },
+            { key: 'phone', name: 'Phone' },
+            { key: 'about', name: 'About' }]
         });
         vm.api.reload();
 

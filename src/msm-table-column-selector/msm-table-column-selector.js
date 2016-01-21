@@ -40,9 +40,14 @@ function ColumnSelectorController($rootScope, $scope) {
   vm.cols = cfg.columns;
   vm.visibility = api.getVisibility();
 
-  vm.select = api.setVisibility;
+  vm.select = select;
 
   // ==========
+
+  function select(columnKey, event) {
+    event.preventDefault();
+    api.setVisibility(columnKey);
+  }
 
   var rmLoading = $rootScope.$on(api.getName() + '.loading', function(event, isLoading) {
     vm.isLoading = isLoading;

@@ -84,6 +84,9 @@ function ViewController($rootScope, $scope, $filter, hotkeys) {
   }).add({
     combo: 'shift+down',
     callback: replaceDefault(api.lastActive)
+  }).add({
+    combo: 'space',
+    callback: replaceDefault(api.setActiveSelection)
   });
 
   function replaceDefault(callback) {

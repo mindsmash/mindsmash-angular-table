@@ -22,6 +22,17 @@ var banner = [
 
 
 /**
+ * Compile SASS files.
+ */
+gulp.task('compile:sass', function() {
+  return gulp.src('./src/module.scss')
+      .pipe($.sass().on('error', $.sass.logError))
+      .pipe($.concat('mindsmash-table.css'))
+      .pipe(gulp.dest('./.tmp'));
+});
+
+
+/**
  * Minify HTMLs in src directory and generate templates.js which contains the HTMLs.
  */
 gulp.task('template:src', function() {
@@ -64,6 +75,10 @@ gulp.task('concat:src', ['template:src'], function() {
 gulp.task('copy:src', ['concat:src'], function() {
   return gulp.src('./.tmp/mindsmash-table.js')
       .pipe($.header(banner, { pkg: pkg }))
+      .pipe(gulp.dest('./dist'));
+});
+gulp.task('copy:sass', ['compile:sass'], function() {
+  return gulp.src('./.tmp/mindsmash-table.css')
       .pipe(gulp.dest('./dist'));
 });
 
@@ -172,7 +187,9 @@ gulp.task('serve:example', ['build'], function() {
   browserSyncInit('./src/example');
   gulp.watch(['./src/!(example)/*.html'], ['build']);
   gulp.watch(['./src/!(example)/*.js'], ['build', 'lint:src:nofail']);
+  gulp.watch(['./src/*.scss'], ['compile:sass']);
   gulp.watch(['./tmp/mindsmash-table.js']).on('change', browserSync.reload);
+  gulp.watch(['./tmp/mindsmash-table.css']).on('change', browserSync.reload);
   gulp.watch(['./src/example/*']).on('change', browserSync.reload);
 });
 

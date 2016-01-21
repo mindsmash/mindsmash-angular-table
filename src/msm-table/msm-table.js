@@ -80,17 +80,12 @@ function MsmTable($rootScope, $q, tableName, tableConfig) {
     pageSize: 10,
     itemCount: 100, // should be named RowCount
     orderBy: null,
-    selection: { //TODO: init
-      1: true,
-      2: true,
-      3: false
-    },
+    selection: {},
     visibility: { //TODO: init
-      id: false,
       firstName: true,
       lastName: true,
       age: true,
-      birthday: false
+      birthday: true
     }
   };
 
@@ -118,6 +113,7 @@ function MsmTable($rootScope, $q, tableName, tableConfig) {
   vm.setOrderBy = setOrderBy;
 
   vm.getActive = getActive;
+  vm.getActiveRow = getActiveRow;
   vm.setActive = setActive;
   vm.firstActive = firstActive;
   vm.previousActive = previousActive;
@@ -129,6 +125,7 @@ function MsmTable($rootScope, $q, tableName, tableConfig) {
 
   vm.getSelection = getSelection;
   vm.setSelection = setSelection;
+  vm.setActiveSelection = setActiveSelection;
 
   // ==========
 
@@ -426,6 +423,10 @@ function MsmTable($rootScope, $q, tableName, tableConfig) {
     return tState.active;
   }
 
+  function getActiveRow() {
+    return tState.active !== null ? tRows[tState.active] : null;
+  }
+
   /**
    * @ngdoc method
    * @name setActive
@@ -530,7 +531,7 @@ function MsmTable($rootScope, $q, tableName, tableConfig) {
     setActive(tRows.length - 1);
   }
 
-  // -----------
+  // ----------- Column Visibility
 
   /**
    * @ngdoc method
@@ -566,7 +567,7 @@ function MsmTable($rootScope, $q, tableName, tableConfig) {
     });
   }
 
-  // -----------
+  // ----------- Row Selection
 
   function getSelection(key) {
     return angular.isDefined(key) ? !!tState.selection[key] : tState.selection;
@@ -589,6 +590,17 @@ function MsmTable($rootScope, $q, tableName, tableConfig) {
       notify('selection', tState.selection);
       return result;
     });
+  }
+
+  function setActiveSelection(value) {
+    var deferred = $q.defer();
+
+    var activeRow = getActiveRow();
+    if (activeRow !== null) {
+      return setSelection(activeRow.id, value);
+    } else {
+      deferred.reject(value);
+    }
   }
 
   // ----------- Helpers

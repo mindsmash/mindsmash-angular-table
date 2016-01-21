@@ -1,0 +1,60 @@
+.msm-table-view {
+
+  // ----------- Sorting
+
+  th {
+    cursor: pointer;
+  }
+
+  .sort::after {
+    color: #777;
+    display: inline-block;
+    font: normal normal normal 14px/1 'Material-Design-Iconic-Font';
+    font-size: inherit;
+    text-align: center;
+    text-rendering: auto;
+    width: 14px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  .sort-asc::after {
+    content: '\f1cf';
+  }
+  .sort-desc::after {
+    content: '\f1d0';
+  }
+
+  // ----------- Active Row & Row Selection
+
+  .msm-table-selector,
+  .msm-table-selector-all {
+    padding-left: 0;
+    padding-right: 0;
+    width: 6px;
+  }
+
+  .msm-table-selector {
+    background-color: mix(#286090, #ffffff, 10%);
+    cursor: pointer;
+  }
+
+  .msm-table-isActive > td {
+    background-color: #f5f5f5;
+  }
+  .msm-table-isActive > td.msm-table-selector {
+    background-color: mix(#286090, #f5f5f5, 50%);
+  }
+  .msm-table-isSelected > td.msm-table-selector {
+    background-color: #286090;
+  }
+}
+
+// ----------- Pagination & Row Selection
+
+.msm-table-column-selector,
+.msm-table-pagination-size {
+  .msm-table-isSelected > a {
+    border-left: 4px solid #286090;
+    padding-left: 16px;
+  }
+}

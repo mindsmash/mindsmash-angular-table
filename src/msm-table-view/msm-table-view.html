@@ -1,7 +1,7 @@
-<table class="table" id="tester" click-outside="vm.activate(null)">
+<table class="table msm-table-view" id="tester" click-outside="vm.activate(null)">
   <thead>
     <tr>
-      <th>[x]</th>
+      <th class="msm-table-selector-all"></th>
       <th ng-repeat="col in vm.cols | filter : vm.visibility[col.key]"
           ng-class="{ 'sort': vm.orderBy.key === col.key, 'sort-asc': vm.orderBy.key === col.key && vm.orderBy.asc === true, 'sort-desc': vm.orderBy.key === col.key && vm.orderBy.asc === false }"
           ng-click="vm.sort(col.key)">{{ col.name }}
@@ -10,9 +10,10 @@
   </thead>
   <tbody>
     <tr ng-repeat="row in vm.rows"
-        ng-class="{ active: vm.active === $index, info: vm.selection[row.id] }"
+        ng-class="{ 'msm-table-isActive': vm.active === $index, 'msm-table-isSelected': vm.selection[row.id] }"
         ng-click="vm.activate($index)">
-      <td ng-click="vm.select(row[vm.selectionKey])">[x]</td>
+      <td class="msm-table-selector"
+          ng-click="vm.select(row[vm.selectionKey])"></td>
       <td ng-repeat="col in vm.cols | filter : vm.visibility[col.key]"
           msm-table-view-cell>{{ row[col.key] }}
       </td>
