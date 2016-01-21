@@ -3,6 +3,8 @@ A data table for AngularJS.
 
 ## Installation
 
+    $ bower install mindsmash-table --save
+
 ## Usage
 
 ## API
