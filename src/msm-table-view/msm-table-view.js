@@ -30,7 +30,7 @@ function msmTableView() {
   };
 }
 
-function ViewController($rootScope, $scope, $filter, hotkeys) {
+function ViewController($rootScope, $scope, $filter, hotkeys, screenSize) {
   var vm = this;
 
   var api = $scope.api();
@@ -62,6 +62,18 @@ function ViewController($rootScope, $scope, $filter, hotkeys) {
     vm.selection = api.getSelection();
     vm.setSelection = api.setSelection;
     vm.clearSelection = api.clearSelection;
+  }
+
+  vm.isMobile = false;
+  vm.mobileSize = cfg.mobileSize;
+  vm.mobileTemplateUrl = cfg.mobileTemplateUrl;
+  if (vm.mobileSize && vm.mobileTemplateUrl) {
+    vm.isMobile = screenSize.is(vm.mobileSize);
+    screenSize.on(vm.mobileSize, function(isMobile) {
+      if (vm.isMobile !== isMobile) {
+        vm.isMobile = isMobile;
+      }
+    });
   }
 
   // ==========

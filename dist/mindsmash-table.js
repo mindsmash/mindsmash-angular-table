@@ -6,49 +6,44 @@
  */
 (function(angular) {
 'use strict';
-
+/**
+ * @ngdoc overview
+ * @name mindsmash-table
+ * @description
+ *
+ * # mindsmash Table
+ * TODO
+ *
+ * ## Configuration
+ * TODO
+ *
+ * ## Usage
+ * TODO
+ */
 MsmTableFactoryProvider.$inject = ["msmTableConfig", "$translateProvider"];
 ColumnSelectorController.$inject = ["$rootScope", "$scope"];
 PagerController.$inject = ["$rootScope", "$scope"];
 PaginationController.$inject = ["$rootScope", "$scope"];
 PaginationSizeController.$inject = ["$rootScope", "$scope"];
-ViewController.$inject = ["$rootScope", "$scope", "$filter", "hotkeys"];
-msmTableViewCell.$inject = ["$compile", "$templateRequest"];(function(angular) {
-  'use strict';
-
-  /**
-   * @ngdoc overview
-   * @name mindsmash-table
-   * @description
-   *
-   * # mindsmash Table
-   * TODO
-   *
-   * ## Configuration
-   * TODO
-   *
-   * ## Usage
-   * TODO
-   */
-  angular.module('mindsmash-table', [
-    'ui.bootstrap.dropdown',
-    'ui.bootstrap.pager',
-    'ui.bootstrap.pagination',
-    'ui.bootstrap.tpls',
-    'angular-click-outside',
-    'cfp.hotkeys',
-    'matchMedia',
-    'pascalprecht.translate'
-  ]);
-
-})(angular);
+ViewController.$inject = ["$rootScope", "$scope", "$filter", "hotkeys", "screenSize"];
+msmTableViewCell.$inject = ["$compile", "$templateRequest"];
+angular.module('mindsmash-table', [
+  'ui.bootstrap.dropdown',
+  'ui.bootstrap.pager',
+  'ui.bootstrap.pagination',
+  'ui.bootstrap.tpls',
+  'angular-click-outside',
+  'cfp.hotkeys',
+  'matchMedia',
+  'pascalprecht.translate'
+]);
 
 
 angular.module("mindsmash-table").run(["$templateCache", function($templateCache) {$templateCache.put("msm-table-column-selector/msm-table-column-selector.html","<div class=\"btn-group\" uib-dropdown auto-close=\"outsideClick\"> <button type=\"button\" class=\"btn btn-default\" uib-dropdown-toggle ng-disabled=\"vm.isLoading\"> <span class=\"msm-table-square\"></span> <span class=\"msm-table-square\"></span> <span class=\"msm-table-square\"></span> <span class=\"msm-table-square\"></span> <span class=\"msm-table-square\"></span> <span class=\"msm-table-square\"></span> <span class=\"msm-table-square\"></span> <span class=\"msm-table-square\"></span> <span class=\"msm-table-square\"></span> <span class=\"caret\"></span> </button> <ul uib-dropdown-menu role=\"menu\"> <li ng-repeat=\"col in vm.cols\" role=\"menuitem\" ng-class=\"{ \'disabled\': col.isSticky, \'msm-table-isSelected\': vm.visibility[col.key] }\"> <a href=\"#\" ng-click=\"!col.isSticky && vm.select(col.key, $event)\" translate=\"{{ col.name }}\"></a> </li> </ul> </div>");
 $templateCache.put("msm-table-pager/msm-table-pager.html","<uib-pager ng-model=\"vm.page\" total-items=\"vm.itemCount\" items-per-page=\"vm.pageSize\" ng-disabled=\"vm.isLoading\" previous-text=\"{{ \'msmTable.pager.previous\' | translate }}\" next-text=\"{{ \'msmTable.pager.next\' | translate }}\"></uib-pager>");
-$templateCache.put("msm-table-pagination/msm-table-pagination.html","<uib-pagination ng-model=\"vm.page\" total-items=\"vm.itemCount\" items-per-page=\"vm.pageSize\" ng-disabled=\"vm.isLoading\" previous-text=\"{{ \'msmTable.pagination.previous\' | translate }}\" next-text=\"{{ \'msmTable.pagination.next\' | translate }}\" rotate=\"true\" max-size=\"5\"></uib-pagination>");
 $templateCache.put("msm-table-pagination-size/msm-table-pagination-size.html","<div class=\"btn-group\" uib-dropdown> <button type=\"button\" class=\"btn btn-default\" uib-dropdown-toggle ng-disabled=\"vm.isLoading\"> {{ vm.pageSize }} <span class=\"caret\"></span> </button> <ul uib-dropdown-menu role=\"menu\"> <li ng-repeat=\"pageSize in vm.pageSizes\" role=\"menuitem\" ng-class=\"{ \'msm-table-isSelected\': pageSize === vm.pageSize }\"> <a href=\"#\" ng-click=\"vm.select(pageSize, $event)\">{{ pageSize }}</a> </li> </ul> </div>");
-$templateCache.put("msm-table-view/msm-table-view.html","<div> <table class=\"table msm-table-table-view\" id=\"{{ vm.name }}\" click-outside=\"vm.clearActive()\"> <thead> <tr> <th class=\"msm-table-selector-all\" ng-show=\"vm.selectionEnabled\"></th> <th ng-repeat=\"col in vm.cols | filter : vm.visibility[col.key]\" ng-class=\"{\n              \'msm-table-isSortable\': vm.orderByEnabled,\n              \'msm-table-isSortedAsc\': vm.orderBy.key === col.key && vm.orderBy.asc === true,\n              \'msm-table-isSortedDesc\': vm.orderBy.key === col.key && vm.orderBy.asc === false }\" ng-click=\"vm.orderByEnabled && vm.setOrderBy(col.key)\" translate=\"{{ col.name }}\"> </th> </tr> </thead> <tbody> <tr ng-repeat=\"row in vm.rows\" ng-class=\"{ \'msm-table-isActive\': vm.active === $index, \'msm-table-isSelected\': vm.selection[row.id] }\" ng-click=\"vm.activeEnabled && vm.setActive($index)\"> <td class=\"msm-table-selector\" ng-show=\"vm.selectionEnabled\" ng-click=\"vm.setSelection(row[vm.selectionKey])\"></td> <td ng-repeat=\"col in vm.cols | filter : vm.visibility[col.key]\" data-label=\"{{ col.name }}\" msm-table-view-cell>{{ row[col.key] }} </td> </tr> </tbody> </table> <ol class=\"list-unstyled msm-table-list-view\"> <li ng-repeat=\"row in vm.rows\" ng-include=\"\'templates/row.mobile.html\'\"></li> </ol> </div>");}]);
+$templateCache.put("msm-table-pagination/msm-table-pagination.html","<uib-pagination ng-model=\"vm.page\" total-items=\"vm.itemCount\" items-per-page=\"vm.pageSize\" ng-disabled=\"vm.isLoading\" previous-text=\"{{ \'msmTable.pagination.previous\' | translate }}\" next-text=\"{{ \'msmTable.pagination.next\' | translate }}\" rotate=\"true\" max-size=\"5\"></uib-pagination>");
+$templateCache.put("msm-table-view/msm-table-view.html","<div> <table id=\"{{ vm.name }}\" class=\"table msm-table-table-view\" ng-if=\"!vm.isMobile\" click-outside=\"vm.clearActive()\"> <thead> <tr> <th class=\"msm-table-selector-all\" ng-show=\"vm.selectionEnabled\"></th> <th ng-repeat=\"col in vm.cols | filter : vm.visibility[col.key]\" ng-class=\"{\n              \'msm-table-isSortable\': vm.orderByEnabled && col.isSortable !== false,\n              \'msm-table-isSortedAsc\': vm.orderBy.key === col.key && vm.orderBy.asc === true,\n              \'msm-table-isSortedDesc\': vm.orderBy.key === col.key && vm.orderBy.asc === false }\" ng-click=\"vm.orderByEnabled && col.isSortable !== false && vm.setOrderBy(col.key)\" translate=\"{{ col.name }}\"> </th> </tr> </thead> <tbody> <tr ng-repeat=\"row in vm.rows\" ng-class=\"{ \'msm-table-isActive\': vm.active === $index, \'msm-table-isSelected\': vm.selection[row.id] }\" ng-click=\"vm.activeEnabled && vm.setActive($index)\"> <td class=\"msm-table-selector\" ng-show=\"vm.selectionEnabled\" ng-click=\"vm.setSelection(row[vm.selectionKey])\"></td> <td ng-repeat=\"col in vm.cols | filter : vm.visibility[col.key]\" data-label=\"{{ col.name }}\" msm-table-view-cell>{{ row[col.key] }} </td> </tr> </tbody> </table> <ol class=\"list-unstyled msm-table-list-view\" ng-if=\"vm.isMobile\"> <li ng-repeat=\"row in vm.rows\" ng-include=\"vm.mobileTemplateUrl\"></li> </ol> </div>");}]);
 
 angular
     .module('mindsmash-table')
@@ -930,15 +925,17 @@ angular
       namespace: 'msmTable',
       source: angular.noop,
       columns: [],
-      active: null,
-      page: 0,
-      pageSizes: [10, 25, 50, 100],
       onAction: angular.noop,
       onBeforeLoad: angular.identity,
       onAfterLoad: angular.identity,
-      selection: 'id',
+      page: 0,
+      pageSizes: [10, 25, 50, 100],
       orderBy: null,
-      storage: 'session'
+      active: null,
+      selection: 'id',
+      storage: 'session',
+      mobileSize: 'xs',
+      mobileTemplateUrl: null
     });
 
 
@@ -1197,7 +1194,7 @@ function msmTableView() {
   };
 }
 
-function ViewController($rootScope, $scope, $filter, hotkeys) {
+function ViewController($rootScope, $scope, $filter, hotkeys, screenSize) {
   var vm = this;
 
   var api = $scope.api();
@@ -1229,6 +1226,18 @@ function ViewController($rootScope, $scope, $filter, hotkeys) {
     vm.selection = api.getSelection();
     vm.setSelection = api.setSelection;
     vm.clearSelection = api.clearSelection;
+  }
+
+  vm.isMobile = false;
+  vm.mobileSize = cfg.mobileSize;
+  vm.mobileTemplateUrl = cfg.mobileTemplateUrl;
+  if (vm.mobileSize && vm.mobileTemplateUrl) {
+    vm.isMobile = screenSize.is(vm.mobileSize);
+    screenSize.on(vm.mobileSize, function(isMobile) {
+      if (vm.isMobile !== isMobile) {
+        vm.isMobile = isMobile;
+      }
+    });
   }
 
   // ==========

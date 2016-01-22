@@ -4,13 +4,15 @@ angular
       namespace: 'msmTable',
       source: angular.noop,
       columns: [],
-      active: null,
-      page: 0,
-      pageSizes: [10, 25, 50, 100],
       onAction: angular.noop,
       onBeforeLoad: angular.identity,
       onAfterLoad: angular.identity,
-      selection: 'id',
+      page: 0,
+      pageSizes: [10, 25, 50, 100],
       orderBy: null,
-      storage: 'session'
+      active: null,
+      selection: 'id',
+      storage: 'session',
+      mobileSize: 'xs',
+      mobileTemplateUrl: null
     });
