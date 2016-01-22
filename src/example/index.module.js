@@ -51,7 +51,8 @@
             { key: 'city', name: 'city', isHidden: true },
             { key: 'country', name: 'country', isHidden: true },
             { key: 'phone', name: 'phone', isHidden: true },
-            { key: 'about', name: 'about', isHidden: true }]
+            { key: 'about', name: 'about', isHidden: true }],
+          mobileTemplateUrl: 'templates/row.mobile.html'
         });
 
         // ==========

@@ -1,0 +1,76 @@
+.msm-table-table-view th.msm-table-isSortable {
+  cursor: pointer; }
+  .msm-table-table-view th.msm-table-isSortable.msm-table-isSortedAsc:after, .msm-table-table-view th.msm-table-isSortable.msm-table-isSortedDesc:after {
+    border: 4px solid transparent;
+    content: ' ';
+    left: 4px;
+    position: relative; }
+  .msm-table-table-view th.msm-table-isSortable.msm-table-isSortedAsc:after {
+    border-top-color: #286090;
+    top: 11px; }
+  .msm-table-table-view th.msm-table-isSortable.msm-table-isSortedDesc:after {
+    border-bottom-color: #286090;
+    top: -11px; }
+
+.msm-table-table-view .msm-table-selector,
+.msm-table-table-view .msm-table-selector-all {
+  padding-left: 0;
+  padding-right: 0;
+  width: 6px; }
+
+.msm-table-table-view .msm-table-selector {
+  background-color: #eaeff4;
+  cursor: pointer; }
+
+.msm-table-table-view .msm-table-isActive > td {
+  background-color: #f5f5f5; }
+
+.msm-table-table-view .msm-table-isActive > td.msm-table-selector {
+  background-color: #8fabc3; }
+
+.msm-table-table-view .msm-table-isSelected > td.msm-table-selector {
+  background-color: #286090; }
+
+.btn-group .msm-table-isSelected > a {
+  border-left: 4px solid #286090;
+  padding-left: 16px; }
+
+.msm-table-square {
+  background-color: #333;
+  border-radius: 1px;
+  display: block;
+  float: left;
+  height: 4px;
+  margin-left: 1px;
+  margin-top: 3px;
+  width: 4px; }
+  .msm-table-square:nth-child(3n) {
+    margin-right: 5px; }
+  .msm-table-square:nth-child(3n+1) {
+    clear: left;
+    margin-left: 0; }
+  .msm-table-square:nth-child(n+4) {
+    margin-top: 1px; }
+
+@media screen and (max-width: 767px) {
+  .msm-table-table-view thead,
+  .msm-table-table-view .msm-table-selector,
+  .msm-table-table-view .msm-table-selector-all {
+    display: none; }
+  .msm-table-table-view tr {
+    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    display: block;
+    margin-bottom: 16px; }
+    .msm-table-table-view tr:last-child {
+      margin-bottom: 0; }
+  .msm-table-table-view > tbody > tr > td {
+    border-top: 1px dotted #ddd;
+    display: block;
+    text-align: right; }
+    .msm-table-table-view > tbody > tr > td:nth-child(2) {
+      border-top: none; }
+  .msm-table-table-view td:before {
+    content: attr(data-label);
+    float: left;
+    font-weight: bold; } }

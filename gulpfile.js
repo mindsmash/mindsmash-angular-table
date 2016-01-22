@@ -40,7 +40,7 @@ gulp.task('template:src', function() {
       .pipe($.htmlmin({
         removeComments: true,
         collapseWhitespace: true,
-        conservativeCollapse: true,
+        customAttrCollapse: /ng\-class/
       }))
       .pipe($.template('templates.js', {
         module: 'mindsmash-table'
@@ -60,11 +60,11 @@ gulp.task('concat:src', ['template:src'], function() {
       ])
       .pipe($.insert.append('\n'))
       .pipe($.concat('mindsmash-table.js'))
-      .pipe($.ngAnnotate({ add: true, remove: true }))
+      .pipe($.ngAnnotate({ add: true, remove: true, single_quotes: true }))
       .pipe($.wrap('(function(angular) {'
           + '\n\'use strict\';'
-          + '\n<%=contents%>'
-          + '\n})(angular);'))
+          + '\n\n<%=contents%>'
+          + '})(angular);'))
       .pipe(gulp.dest('./.tmp'));
 });
 
@@ -90,6 +90,12 @@ gulp.task('uglify:src', ['copy:src'], function() {
   return gulp.src('./dist/mindsmash-table.js')
       .pipe($.uglify())
       .pipe($.header(banner, { pkg: pkg }))
+      .pipe($.rename({ suffix: '.min' }))
+      .pipe(gulp.dest('./dist'));
+});
+gulp.task('minify:css', ['copy:sass'], function() {
+  return gulp.src('./dist/mindsmash-table.css')
+      .pipe($.minifyCss())
       .pipe($.rename({ suffix: '.min' }))
       .pipe(gulp.dest('./dist'));
 });
@@ -141,6 +147,7 @@ function browserSyncInit(baseDir, browser) {
       routes: {
         '/bower_components': 'bower_components',
         '/docs': 'docs',
+        '/dist': 'dist',
         '/tmp': '.tmp'
       }
     },
@@ -208,7 +215,7 @@ gulp.task('test:spec', ['build', 'lint:src'], function(done) {
 
 gulp.task('clean', ['clean:tmp', 'clean:dist', 'clean:docs']);
 
-gulp.task('build', ['template:src', 'concat:src', 'copy:src', 'uglify:src']);
+gulp.task('build', ['template:src', 'concat:src', 'copy:src', 'copy:sass', 'uglify:src', 'minify:css']);
 
 gulp.task('test', ['build', 'lint:src', 'test:spec']);
 
