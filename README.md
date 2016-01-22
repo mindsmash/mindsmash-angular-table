@@ -1,5 +1,5 @@
 # mindsmash-table
-A data table for AngularJS.
+Yet another data table for AngularJS. The current implementation features data sorting, pagination, filters and more. The library is designed to easily integrate with a Spring Boot application backend, but can also be used with any other framework.
 
 ### Table of Contents
 
@@ -31,7 +31,11 @@ A data table for AngularJS.
 
 ### 2. Usage
 
+**[Back to top](#table-of-contents)**
+
 ### 3. API
+
+**[Back to top](#table-of-contents)**
 
 ### Contributors
 
