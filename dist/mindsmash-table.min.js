@@ -1,6 +1,6 @@
 /**
  * @name mindsmash-table
- * @version v0.2.0
+ * @version v0.2.2
  * @author mindsmash GmbH
  * @license MIT
  */
