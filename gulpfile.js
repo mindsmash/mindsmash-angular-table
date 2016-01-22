@@ -148,7 +148,7 @@ function browserSyncInit(baseDir, browser) {
         '/bower_components': 'bower_components',
         '/docs': 'docs',
         '/dist': 'dist',
-        '/tmp': '.tmp'
+        '/.tmp': '.tmp'
       }
     },
     browser: browser === undefined ? 'default' : browser,
