@@ -1,4 +1,4 @@
-.msm-table-view {
+.msm-table-table-view {
 
   // ----------- Sorting
 
@@ -49,12 +49,9 @@
 
 // ----------- Pagination & Row Selection
 
-.msm-table-column-selector,
-.msm-table-pagination-size {
-  .msm-table-isSelected > a {
-    border-left: 4px solid #286090;
-    padding-left: 16px;
-  }
+.btn-group .msm-table-isSelected > a {
+  border-left: 4px solid #286090;
+  padding-left: 16px;
 }
 
 // ----------- Column Visibility
@@ -86,7 +83,7 @@
 // ----------- Mobile
 
 @media screen and (max-width: 1000px) {
-  .msm-table-view {
+  .msm-table-table-view {
     thead,
     .msm-table-selector,
     .msm-table-selector-all {

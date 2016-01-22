@@ -39,11 +39,12 @@ function ViewController($rootScope, $scope, $filter, hotkeys) {
   // ==========
 
   vm.isLoading = false;
+  vm.name = api.getName();
   vm.cols = getVisibleCols(cfg.columns, api.getVisibility());
   vm.rows = api.getRows();
 
-  vm.activeOrderBy = cfg.orderBy !== false;
-  if (vm.activeOrderBy) {
+  vm.orderByEnabled = cfg.orderBy !== false;
+  if (vm.orderByEnabled) {
     vm.orderBy = api.getOrderBy();
     vm.setOrderBy = api.setOrderBy;
   }

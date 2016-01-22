@@ -1,15 +1,15 @@
 <div>
-  <table class="table msm-table-view" id="tester" click-outside="vm.clearActive()">
+  <table class="table msm-table-table-view" id="{{ vm.name }}" click-outside="vm.clearActive()">
     <thead>
       <tr>
         <th class="msm-table-selector-all"
             ng-show="vm.selectionEnabled"></th>
         <th ng-repeat="col in vm.cols | filter : vm.visibility[col.key]"
             ng-class="{
-              'msm-table-isSortable': vm.activeOrderBy,
+              'msm-table-isSortable': vm.orderByEnabled,
               'msm-table-isSortedAsc': vm.orderBy.key === col.key && vm.orderBy.asc === true,
               'msm-table-isSortedDesc': vm.orderBy.key === col.key && vm.orderBy.asc === false }"
-            ng-click="vm.activeOrderBy && vm.setOrderBy(col.key)"
+            ng-click="vm.orderByEnabled && vm.setOrderBy(col.key)"
             translate="{{ col.name }}">
         </th>
       </tr>
@@ -29,7 +29,7 @@
     </tbody>
   </table>
 
-  <ol start="0">
+  <ol class="list-unstyleds msm-table-list-view" start="0">
     <li ng-repeat="row in vm.rows" ng-include="'templates/row.mobile.html'"></li>
   </ol>
 </div>
