@@ -1,15 +1,43 @@
 # mindsmash-table
 A data table for AngularJS.
 
-## Installation
+### Table of Contents
 
-    $ bower install mindsmash-table --save
+   - [Installation](#1-installation)
+   - [Usage](#2-usage)
+   - [API](#3-api)
 
-## Usage
+### 1. Installation
 
-## API
+   1. Download the [latest release](https://github.com/mindsmash/mindsmash-angular-table/releases) or the [current master](https://github.com/mindsmash/mindsmash-angular-table/archive/master.zip) from GitHub. You can also use [Bower](http://bower.io) to install the latest version:
+   ```
+   $ bower install mindsmash-angular-table --save
+   ```
+   
+   2. Include the library in your website (please use either the minified or unminified file in the `dist` directory):
+   ```
+   <link rel="stylesheet" href="mindsmash-angular-table/mindsmash-angular-table.min.css"/>
+   ```
+   ```
+   <script src="mindsmash-angular-table/mindsmash-angular-table.min.js"></script>
+   ```
+   
+   3. Add uxTable as a dependency to your app:
+   ```
+   angular.module('your-app', ['mindsmash-table']);
+   ```
 
-## License
+**[Back to top](#table-of-contents)**
+
+### 2. Usage
+
+### 3. API
+
+### Contributors
+
+   * Fynn Feldpausch @ [mindsmash GmbH](https://www.mindsmash.com/)
+
+### License
 
 The MIT License (MIT)
 
