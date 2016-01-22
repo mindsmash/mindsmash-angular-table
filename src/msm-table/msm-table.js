@@ -1,10 +1,10 @@
 angular
     .module('mindsmash-table')
-    .provider('MsmTableFactory', MsmTableFactoryProvider);
+    .provider('msmTableFactory', MsmTableFactoryProvider);
 
 /**
  * @ngdoc service
- * @name mindsmash-table.MsmTableFactoryProvider
+ * @name mindsmash-table.msmTableFactoryProvider
  *
  * @description
  * TODO
@@ -37,7 +37,7 @@ function MsmTableFactoryProvider(msmTableConfig, $translateProvider) {
 
 /**
  * @ngdoc service
- * @name mindsmash-table.MsmTableFactory
+ * @name mindsmash-table.msmTableFactory
  *
  * @description
  * TODO
@@ -47,14 +47,14 @@ function MsmTableFactory($rootScope, $q, $window, tableConfig) {
   /**
    * @ngdoc method
    * @name get
-   * @methodOf mindsmash-table.MsmTableFactory
+   * @methodOf mindsmash-table.msmTableFactory
    *
    * @description
-   * Returns a new {@link mindsmash-table.MsmTable MsmTable} API instance to be used with *msmTable*-directives.
+   * Returns a new {@link mindsmash-table.msmTable MsmTable} API instance to be used with *msmTable*-directives.
    *
    * @param {string} name The table's unique identifier.
    * @param {Object} config The table's configuration.
-   * @returns {Object} A {@link mindsmash-table.MsmTable MsmTable} API instance.
+   * @returns {Object} A {@link mindsmash-table.msmTable MsmTable} API instance.
    */
   return {
     get: get
@@ -69,7 +69,7 @@ function MsmTableFactory($rootScope, $q, $window, tableConfig) {
 
 /**
  * @ngdoc service
- * @name mindsmash-table.MsmTable
+ * @name mindsmash-table.msmTable
  *
  * @description
  * TODO
@@ -203,7 +203,7 @@ function MsmTable($rootScope, $q, $window, tableName, tableConfig) {
   /**
    * @ngdoc method
    * @name reload
-   * @methodOf mindsmash-table.MsmTable
+   * @methodOf mindsmash-table.msmTable
    *
    * @description
    * Reloads the data of the table.
@@ -223,8 +223,7 @@ function MsmTable($rootScope, $q, $window, tableName, tableConfig) {
       var mappings = {
         number: 'page',
         size: 'pageSize',
-        totalElements: 'itemCount',
-        totalPages: 'pageCount'
+        totalElements: 'itemCount'
         //TODO: orderBy
       };
       for (var remoteKey in mappings) {
@@ -239,8 +238,9 @@ function MsmTable($rootScope, $q, $window, tableName, tableConfig) {
       }
 
       /* check active boundaries */
-      if (tState.active !== null && tState.active >= tRows.length) {
-        tState.active = tRows.length - 1;
+      var pageItemCount = getPageItemCount();
+      if (tState.active !== null && tState.active >= pageItemCount) {
+        tState.active = pageItemCount - 1;
         notify('active', tState.active);
       }
 
@@ -271,7 +271,7 @@ function MsmTable($rootScope, $q, $window, tableName, tableConfig) {
   /**
    * @ngdoc method
    * @name getPage
-   * @methodOf mindsmash-table.MsmTable
+   * @methodOf mindsmash-table.msmTable
    *
    * @description
    * Returns the current page number.
@@ -285,7 +285,7 @@ function MsmTable($rootScope, $q, $window, tableName, tableConfig) {
   /**
    * @ngdoc method
    * @name setPage
-   * @methodOf mindsmash-table.MsmTable
+   * @methodOf mindsmash-table.msmTable
    *
    * @description
    * Moves to a specific page.
@@ -313,7 +313,7 @@ function MsmTable($rootScope, $q, $window, tableName, tableConfig) {
   /**
    * @ngdoc method
    * @name firstPage
-   * @methodOf mindsmash-table.MsmTable
+   * @methodOf mindsmash-table.msmTable
    *
    * @description
    * Shortcut method to move to the first page.
@@ -327,7 +327,7 @@ function MsmTable($rootScope, $q, $window, tableName, tableConfig) {
   /**
    * @ngdoc method
    * @name previousPage
-   * @methodOf mindsmash-table.MsmTable
+   * @methodOf mindsmash-table.msmTable
    *
    * @description
    * Shortcut method to move to the previous page.
@@ -341,7 +341,7 @@ function MsmTable($rootScope, $q, $window, tableName, tableConfig) {
   /**
    * @ngdoc method
    * @name nextPage
-   * @methodOf mindsmash-table.MsmTable
+   * @methodOf mindsmash-table.msmTable
    *
    * @description
    * Shortcut method to move to the next page.
@@ -355,7 +355,7 @@ function MsmTable($rootScope, $q, $window, tableName, tableConfig) {
   /**
    * @ngdoc method
    * @name lastPage
-   * @methodOf mindsmash-table.MsmTable
+   * @methodOf mindsmash-table.msmTable
    *
    * @description
    * Shortcut method to move to the last page.
@@ -369,7 +369,7 @@ function MsmTable($rootScope, $q, $window, tableName, tableConfig) {
   /**
    * @ngdoc method
    * @name getPageSize
-   * @methodOf mindsmash-table.MsmTable
+   * @methodOf mindsmash-table.msmTable
    *
    * @description
    * Returns the current page size.
@@ -383,7 +383,7 @@ function MsmTable($rootScope, $q, $window, tableName, tableConfig) {
   /**
    * @ngdoc method
    * @name setPageSize
-   * @methodOf mindsmash-table.MsmTable
+   * @methodOf mindsmash-table.msmTable
    *
    * @description
    * Sets a specific page size.
@@ -413,7 +413,7 @@ function MsmTable($rootScope, $q, $window, tableName, tableConfig) {
   /**
    * @ngdoc method
    * @name getOrderBy
-   * @methodOf mindsmash-table.MsmTable
+   * @methodOf mindsmash-table.msmTable
    *
    * @description
    * Returns the current order, denoted by `key` (sort key) and `asc` (sort order).
@@ -427,7 +427,7 @@ function MsmTable($rootScope, $q, $window, tableName, tableConfig) {
   /**
    * @ngdoc method
    * @name setOrderBy
-   * @methodOf mindsmash-table.MsmTable
+   * @methodOf mindsmash-table.msmTable
    *
    * @description
    * Toggles or sets a new sort order. The sort order is set according to the following rules:
@@ -476,7 +476,7 @@ function MsmTable($rootScope, $q, $window, tableName, tableConfig) {
   /**
    * @ngdoc method
    * @name clearOrderBy
-   * @methodOf mindsmash-table.MsmTable
+   * @methodOf mindsmash-table.msmTable
    *
    * @description
    * Shortcut method to clear the current sort order.
@@ -492,7 +492,7 @@ function MsmTable($rootScope, $q, $window, tableName, tableConfig) {
   /**
    * @ngdoc method
    * @name getActive
-   * @methodOf mindsmash-table.MsmTable
+   * @methodOf mindsmash-table.msmTable
    *
    * @description
    * Returns the index of the currently active row.
@@ -506,7 +506,7 @@ function MsmTable($rootScope, $q, $window, tableName, tableConfig) {
   /**
    * @ngdoc method
    * @name setActive
-   * @methodOf mindsmash-table.MsmTable
+   * @methodOf mindsmash-table.msmTable
    *
    * @description
    * Activates a specific row of the current page.
@@ -520,14 +520,15 @@ function MsmTable($rootScope, $q, $window, tableName, tableConfig) {
     var prev = false;
     var next = false;
 
+    var pageItemCount = getPageItemCount();
     if (active === null) {
       newActive = tState.active !== null ? null : tState.active;
     } else if (active < 0) {
       prev = tState.page > 0;
-      newActive = prev ? tState.pageSize - 1 : tState.active;
-    } else if (active >= tState.pageSize) {
+      newActive = prev ? tState.pageSize - 1 : (active !== null ? 0 : null);
+    } else if (active >= pageItemCount) {
       next = tState.page < getPageCount() - 1;
-      newActive = next ? 0 : tState.active;
+      newActive = next ? 0 : (active !== null ? pageItemCount - 1 : null);
     } else {
       newActive = Math.min(active, tRows.length - 1);
     }
@@ -554,7 +555,7 @@ function MsmTable($rootScope, $q, $window, tableName, tableConfig) {
   /**
    * @ngdoc method
    * @name firstActive
-   * @methodOf mindsmash-table.MsmTable
+   * @methodOf mindsmash-table.msmTable
    *
    * @description
    * Shortcut method to activate the first row.
@@ -562,13 +563,13 @@ function MsmTable($rootScope, $q, $window, tableName, tableConfig) {
    * @returns {Promise} A table resource promise.
    */
   function firstActive() {
-    setActive(tState.active !== null ? 0 : tRows.length - 1)
+    return setActive(0)
   }
 
   /**
    * @ngdoc method
    * @name previousActive
-   * @methodOf mindsmash-table.MsmTable
+   * @methodOf mindsmash-table.msmTable
    *
    * @description
    * Shortcut method to activate the previous row.
@@ -576,13 +577,13 @@ function MsmTable($rootScope, $q, $window, tableName, tableConfig) {
    * @returns {Promise} A table resource promise.
    */
   function previousActive() {
-    setActive(tState.active !== null ? tState.active - 1 : 0);
+    return setActive(tState.active !== null ? tState.active - 1 : 0);
   }
 
   /**
    * @ngdoc method
    * @name nextActive
-   * @methodOf mindsmash-table.MsmTable
+   * @methodOf mindsmash-table.msmTable
    *
    * @description
    * Shortcut method to activate the next row.
@@ -590,13 +591,13 @@ function MsmTable($rootScope, $q, $window, tableName, tableConfig) {
    * @returns {Promise} A table resource promise.
    */
   function nextActive() {
-    setActive(tState.active !== null ? tState.active + 1 : 0);
+    return setActive(tState.active !== null ? tState.active + 1 : 0);
   }
 
   /**
    * @ngdoc method
    * @name lastActive
-   * @methodOf mindsmash-table.MsmTable
+   * @methodOf mindsmash-table.msmTable
    *
    * @description
    * Shortcut method to activate the last row.
@@ -604,13 +605,13 @@ function MsmTable($rootScope, $q, $window, tableName, tableConfig) {
    * @returns {Promise} A table resource promise.
    */
   function lastActive() {
-    setActive(tState.active !== null ? tRows.length - 1 : 0)
+    return setActive(getPageItemCount() - 1);
   }
 
   /**
    * @ngdoc method
    * @name clearActive
-   * @methodOf mindsmash-table.MsmTable
+   * @methodOf mindsmash-table.msmTable
    *
    * @description
    * Shortcut method to clear the current active row.
@@ -626,7 +627,7 @@ function MsmTable($rootScope, $q, $window, tableName, tableConfig) {
   /**
    * @ngdoc method
    * @name getVisibility
-   * @methodOf mindsmash-table.MsmTable
+   * @methodOf mindsmash-table.msmTable
    *
    * @description
    * Returns the visibility of the column with the given `key` or the visibility of all columns.
@@ -641,7 +642,7 @@ function MsmTable($rootScope, $q, $window, tableName, tableConfig) {
   /**
    * @ngdoc method
    * @name setVisibility
-   * @methodOf mindsmash-table.MsmTable
+   * @methodOf mindsmash-table.msmTable
    *
    * @description
    * Toggles or sets the visibility of the column with the given key. The visibility is set according to the following
@@ -678,7 +679,7 @@ function MsmTable($rootScope, $q, $window, tableName, tableConfig) {
   /**
    * @ngdoc method
    * @name getSelection
-   * @methodOf mindsmash-table.MsmTable
+   * @methodOf mindsmash-table.msmTable
    *
    * @description
    * Returns the selection of the column with the given `key` or the selection of all columns.
@@ -693,7 +694,7 @@ function MsmTable($rootScope, $q, $window, tableName, tableConfig) {
   /**
    * @ngdoc method
    * @name setSelection
-   * @methodOf mindsmash-table.MsmTable
+   * @methodOf mindsmash-table.msmTable
    *
    * @description
    * Toggles or sets the selection of the column with the given key. The selection is set according to the following
@@ -728,7 +729,7 @@ function MsmTable($rootScope, $q, $window, tableName, tableConfig) {
   /**
    * @ngdoc method
    * @name setActiveSelection
-   * @methodOf mindsmash-table.MsmTable
+   * @methodOf mindsmash-table.msmTable
    *
    * @description
    * Shortcut method to set the selection for the activate row.
@@ -748,7 +749,7 @@ function MsmTable($rootScope, $q, $window, tableName, tableConfig) {
   /**
    * @ngdoc method
    * @name clearSelection
-   * @methodOf mindsmash-table.MsmTable
+   * @methodOf mindsmash-table.msmTable
    *
    * @description
    * Shortcut method to clear the selection.
@@ -775,6 +776,10 @@ function MsmTable($rootScope, $q, $window, tableName, tableConfig) {
 
   function getPageCount() {
     return Math.ceil(tState.itemCount / tState.pageSize);
+  }
+
+  function getPageItemCount() {
+    return tState.page < getPageCount() - 1 ? tState.pageSize : tState.itemCount % tState.pageSize;
   }
 
   function notify(key, data) {

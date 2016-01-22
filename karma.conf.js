@@ -10,7 +10,7 @@ module.exports = function(config) {
 
     // frameworks to use
     // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-    frameworks: ['mocha', 'chai', 'chai-as-promised', 'chai-dom', 'sinon-chai'],
+    frameworks: ['mocha', 'chai'],
 
 
     client: {
@@ -22,11 +22,12 @@ module.exports = function(config) {
     // list of files / patterns to load in the browser
     files: [
       'bower_components/angular/angular.js',
+      'bower_components/angular-translate/angular-translate.js',
       'bower_components/angular-bootstrap/ui-bootstrap-tpls.js',
       'bower_components/angular-click-outside/clickoutside.directive.js',
       'bower_components/angular-hotkeys/build/hotkeys.js',
-      'bower_components/angular-sanitize/angular-sanitize.js',
-      '.tmp/mindsmash-table.js',
+      'bower_components/angular-media-queries/match-media.js',
+      'dist/mindsmash-table.js',
 
       'bower_components/angular-mocks/angular-mocks.js',
       'test/**/*.spec.js'
@@ -40,7 +41,7 @@ module.exports = function(config) {
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
-      'mindsmash-table.js': 'coverage'
+      'dist/mindsmash-table.js': 'coverage'
     },
 
 

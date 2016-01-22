@@ -13,11 +13,11 @@ angular
  * previous/next paging functionality.
  *
  * # Configuration
- * This directive is configured via the {@link mindsmash-table.MsmTable MsmTable} API instance or the default parameters
- * set in the {@link mindsmash-table.MsmTableFactoryProvider MsmTableFactoryProvider}. Valid configuration values are
- * described in the {@link mindsmash-table.MsmTable#configuration configuration section}.
+ * This directive is configured via the {@link mindsmash-table.msmTable MsmTable} API instance or the default parameters
+ * set in the {@link mindsmash-table.msmTableFactoryProvider MsmTableFactoryProvider}. Valid configuration values are
+ * described in the {@link mindsmash-table.msmTable MsmTable} configuration section.
  *
- * @param {expression} api A {@link mindsmash-table.MsmTable MsmTable} API instance.
+ * @param {expression} api A {@link mindsmash-table.msmTable MsmTable} API instance.
  */
 function msmTablePager() {
   return {

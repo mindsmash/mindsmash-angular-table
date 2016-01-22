@@ -7,7 +7,6 @@
         <th ng-repeat="col in vm.cols | filter : vm.visibility[col.key]"
             ng-class="{
               'msm-table-isSortable': vm.activeOrderBy,
-              'msm-table-isSorted': vm.orderBy.key === col.key,
               'msm-table-isSortedAsc': vm.orderBy.key === col.key && vm.orderBy.asc === true,
               'msm-table-isSortedDesc': vm.orderBy.key === col.key && vm.orderBy.asc === false }"
             ng-click="vm.activeOrderBy && vm.setOrderBy(col.key)"
