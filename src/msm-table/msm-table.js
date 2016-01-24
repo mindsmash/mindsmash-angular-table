@@ -30,8 +30,8 @@ function MsmTableFactoryProvider(msmTableConfig, $translateProvider) {
     angular.merge(tableConfig, config);
   }
 
-  function $get($rootScope, $q, $window) {
-    return new MsmTableFactory($rootScope, $q, $window, tableConfig);
+  function $get($rootScope, $filter, $q, $window) {
+    return new MsmTableFactory($rootScope, $filter, $q, $window, tableConfig);
   }
 }
 
@@ -42,7 +42,7 @@ function MsmTableFactoryProvider(msmTableConfig, $translateProvider) {
  * @description
  * TODO
  */
-function MsmTableFactory($rootScope, $q, $window, tableConfig) {
+function MsmTableFactory($rootScope, $filter, $q, $window, tableConfig) {
 
   /**
    * @ngdoc method
@@ -63,7 +63,7 @@ function MsmTableFactory($rootScope, $q, $window, tableConfig) {
   // ==========
 
   function get(name, config) {
-    return new MsmTable($rootScope, $q, $window, name, angular.merge(tableConfig, config));
+    return new MsmTable($rootScope, $filter, $q, $window, name, angular.merge(tableConfig, config));
   }
 }
 
@@ -80,7 +80,7 @@ function MsmTableFactory($rootScope, $q, $window, tableConfig) {
  * #Events
  * TODO
  */
-function MsmTable($rootScope, $q, $window, tableName, tableConfig) {
+function MsmTable($rootScope, $filter, $q, $window, tableName, tableConfig) {
   var vm = this;
 
   var tName = tableConfig.namespace + '.' + tableName;
@@ -200,6 +200,25 @@ function MsmTable($rootScope, $q, $window, tableName, tableConfig) {
     return params;
   }
 
+  function getLocalData(params) {
+    var data = tableConfig.source;
+    return $q(function(resolve) {
+      var from = params.page * params.pageSize;
+      var to = from + params.pageSize;
+      var items = params.orderBy ? $filter('orderBy')(data, params.orderBy, !params.orderAsc) : data;
+      items = items.slice(from, to);
+      resolve({
+        content: items,
+        number: params.page,
+        numberOfElements: items.length,
+        size: params.pageSize,
+        sort: params.orderBy,
+        totalElements: data.length,
+        totalPages: Math.ceil(data.length / params.pageSize)
+      });
+    });
+  }
+
   /**
    * @ngdoc method
    * @name reload
@@ -211,8 +230,12 @@ function MsmTable($rootScope, $q, $window, tableName, tableConfig) {
    * @returns {Promise} A table resource promise.
    */
   function reload() {
+    var params = tableConfig.onBeforeLoad(getParams());
+    var data = angular.isArray(tableConfig.source) ? getLocalData(params) : tableConfig.source(params);
+
     notify('loading', true);
-    return tableConfig.source(tableConfig.onBeforeLoad(getParams())).then(function(response) {
+
+    return data.then(function(response) {
       response = tableConfig.onAfterLoad(response);
 
       /* refresh content */

@@ -29,7 +29,7 @@
         var vm = this;
 
         vm.api = msmTableFactory.get('table', {
-          source: source,
+          source: generate(55),
           onAction: function(data, event) {
             $log.debug("Action:", data);
           },
@@ -56,29 +56,6 @@
         });
 
         // ==========
-
-        var delay = 2000;
-        var data = generate(55);
-
-        function source(params) {
-          return $q(function(resolve, reject) {
-            $timeout(function() {
-              var from = params.page * params.pageSize;
-              var to = from + params.pageSize;
-              var items = params.orderBy ? $filter('orderBy')(data, params.orderBy, !params.orderAsc) : data;
-              items = items.slice(from, to);
-              resolve({
-                content: items,
-                number: params.page,
-                numberOfElements: items.length,
-                size: params.pageSize,
-                sort: params.orderBy,
-                totalElements: data.length,
-                totalPages: Math.ceil(data.length / params.pageSize)
-              });
-            }, delay);
-          });
-        }
 
         function generate(amount) {
           var result = [];

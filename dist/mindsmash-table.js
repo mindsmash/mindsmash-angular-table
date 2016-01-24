@@ -1,6 +1,6 @@
 /**
  * @name mindsmash-table
- * @version v0.2.2
+ * @version v0.3.0
  * @author mindsmash GmbH
  * @license MIT
  */
@@ -21,8 +21,8 @@
  * ## Usage
  * TODO
  */
-MsmTableFactoryProvider.$inject = ['msmTableConfig', '$translateProvider'];
 ColumnSelectorController.$inject = ['$rootScope', '$scope'];
+MsmTableFactoryProvider.$inject = ['msmTableConfig', '$translateProvider'];
 PagerController.$inject = ['$rootScope', '$scope'];
 PaginationController.$inject = ['$rootScope', '$scope'];
 PaginationSizeController.$inject = ['$rootScope', '$scope'];
@@ -48,6 +48,84 @@ $templateCache.put("msm-table-view/msm-table-view.html","<div><table id=\"{{ vm.
 
 angular
     .module('mindsmash-table')
+    .directive('msmTableColumnSelector', msmTableColumnSelector);
+
+/**
+ * @ngdoc directive
+ * @name mindsmash-table.directive:msmTableColumnSelector
+ * @restrict E
+ * @scope
+ *
+ * @description
+ * This directive renders a column selector.
+ *
+ * # Configuration
+ * This directive is configured via the {@link mindsmash-table.msmTable MsmTable} API instance or the default parameters
+ * set in the {@link mindsmash-table.msmTableFactoryProvider MsmTableFactoryProvider}. Valid configuration values are
+ * described in the {@link mindsmash-table.msmTable MsmTable} configuration section.
+ *
+ * @param {expression} api A {@link mindsmash-table.msmTable MsmTable} API instance.
+ */
+function msmTableColumnSelector() {
+  return {
+    restrict: 'E',
+    controller: ColumnSelectorController,
+    controllerAs: 'vm',
+    templateUrl: 'msm-table-column-selector/msm-table-column-selector.html',
+    scope: {
+      api: '&'
+    }
+  };
+}
+
+function ColumnSelectorController($rootScope, $scope) {
+  var vm = this;
+
+  var api = $scope.api();
+  var cfg = api.getConfig();
+
+  // ==========
+
+  vm.isLoading = false;
+  vm.cols = cfg.columns;
+  vm.visibility = api.getVisibility();
+
+  vm.select = select;
+
+  // ==========
+
+  function select(key, event) {
+    event.preventDefault();
+
+    var toggleable = !vm.visibility[key];
+    if (!toggleable) {
+      var vKeys = Object.keys(vm.visibility);
+      while (!toggleable && vKeys.length > 0) {
+        var vKey = vKeys.shift();
+        toggleable = vKey !== key && vm.visibility[vKey];
+      }
+    }
+
+    if (toggleable) {
+      return api.setVisibility(key);
+    }
+  }
+
+  var rmLoading = $rootScope.$on(api.getName() + '.loading', function(event, isLoading) {
+    vm.isLoading = isLoading;
+  });
+
+  var rmVisibility = $rootScope.$on(api.getName() + '.visibility', function(event, visibility) {
+    vm.visibility = visibility;
+  });
+
+  $scope.$on('$destroy', rmLoading);
+  $scope.$on('$destroy', rmVisibility);
+}
+
+
+angular
+    .module('mindsmash-table')
     .provider('msmTableFactory', MsmTableFactoryProvider);
 
 /**
@@ -58,7 +136,7 @@ angular
  * TODO
  */
 function MsmTableFactoryProvider(msmTableConfig, $translateProvider) {
-  $get.$inject = ['$rootScope', '$q', '$window'];
+  $get.$inject = ['$rootScope', '$filter', '$q', '$window'];
   var tableConfig = msmTableConfig;
 
   $translateProvider.translations('en', {
@@ -79,8 +157,8 @@ function MsmTableFactoryProvider(msmTableConfig, $translateProvider) {
     angular.merge(tableConfig, config);
   }
 
-  function $get($rootScope, $q, $window) {
-    return new MsmTableFactory($rootScope, $q, $window, tableConfig);
+  function $get($rootScope, $filter, $q, $window) {
+    return new MsmTableFactory($rootScope, $filter, $q, $window, tableConfig);
   }
 }
 
@@ -91,7 +169,7 @@ function MsmTableFactoryProvider(msmTableConfig, $translateProvider) {
  * @description
  * TODO
  */
-function MsmTableFactory($rootScope, $q, $window, tableConfig) {
+function MsmTableFactory($rootScope, $filter, $q, $window, tableConfig) {
 
   /**
    * @ngdoc method
@@ -112,7 +190,7 @@ function MsmTableFactory($rootScope, $q, $window, tableConfig) {
   // ==========
 
   function get(name, config) {
-    return new MsmTable($rootScope, $q, $window, name, angular.merge(tableConfig, config));
+    return new MsmTable($rootScope, $filter, $q, $window, name, angular.merge(tableConfig, config));
   }
 }
 
@@ -129,7 +207,7 @@ function MsmTableFactory($rootScope, $q, $window, tableConfig) {
  * #Events
  * TODO
  */
-function MsmTable($rootScope, $q, $window, tableName, tableConfig) {
+function MsmTable($rootScope, $filter, $q, $window, tableName, tableConfig) {
   var vm = this;
 
   var tName = tableConfig.namespace + '.' + tableName;
@@ -249,6 +327,25 @@ function MsmTable($rootScope, $q, $window, tableName, tableConfig) {
     return params;
   }
 
+  function getLocalData(params) {
+    var data = tableConfig.source;
+    return $q(function(resolve) {
+      var from = params.page * params.pageSize;
+      var to = from + params.pageSize;
+      var items = params.orderBy ? $filter('orderBy')(data, params.orderBy, !params.orderAsc) : data;
+      items = items.slice(from, to);
+      resolve({
+        content: items,
+        number: params.page,
+        numberOfElements: items.length,
+        size: params.pageSize,
+        sort: params.orderBy,
+        totalElements: data.length,
+        totalPages: Math.ceil(data.length / params.pageSize)
+      });
+    });
+  }
+
   /**
    * @ngdoc method
    * @name reload
@@ -260,8 +357,12 @@ function MsmTable($rootScope, $q, $window, tableName, tableConfig) {
    * @returns {Promise} A table resource promise.
    */
   function reload() {
+    var params = tableConfig.onBeforeLoad(getParams());
+    var data = angular.isArray(tableConfig.source) ? getLocalData(params) : tableConfig.source(params);
+
     notify('loading', true);
-    return tableConfig.source(tableConfig.onBeforeLoad(getParams())).then(function(response) {
+
+    return data.then(function(response) {
       response = tableConfig.onAfterLoad(response);
 
       /* refresh content */
@@ -839,84 +940,6 @@ function MsmTable($rootScope, $q, $window, tableName, tableConfig) {
     notify(key, data);
     saveState();
   }
-}
-
-
-angular
-    .module('mindsmash-table')
-    .directive('msmTableColumnSelector', msmTableColumnSelector);
-
-/**
- * @ngdoc directive
- * @name mindsmash-table.directive:msmTableColumnSelector
- * @restrict E
- * @scope
- *
- * @description
- * This directive renders a column selector.
- *
- * # Configuration
- * This directive is configured via the {@link mindsmash-table.msmTable MsmTable} API instance or the default parameters
- * set in the {@link mindsmash-table.msmTableFactoryProvider MsmTableFactoryProvider}. Valid configuration values are
- * described in the {@link mindsmash-table.msmTable MsmTable} configuration section.
- *
- * @param {expression} api A {@link mindsmash-table.msmTable MsmTable} API instance.
- */
-function msmTableColumnSelector() {
-  return {
-    restrict: 'E',
-    controller: ColumnSelectorController,
-    controllerAs: 'vm',
-    templateUrl: 'msm-table-column-selector/msm-table-column-selector.html',
-    scope: {
-      api: '&'
-    }
-  };
-}
-
-function ColumnSelectorController($rootScope, $scope) {
-  var vm = this;
-
-  var api = $scope.api();
-  var cfg = api.getConfig();
-
-  // ==========
-
-  vm.isLoading = false;
-  vm.cols = cfg.columns;
-  vm.visibility = api.getVisibility();
-
-  vm.select = select;
-
-  // ==========
-
-  function select(key, event) {
-    event.preventDefault();
-
-    var toggleable = !vm.visibility[key];
-    if (!toggleable) {
-      var vKeys = Object.keys(vm.visibility);
-      while (!toggleable && vKeys.length > 0) {
-        var vKey = vKeys.shift();
-        toggleable = vKey !== key && vm.visibility[vKey];
-      }
-    }
-
-    if (toggleable) {
-      return api.setVisibility(key);
-    }
-  }
-
-  var rmLoading = $rootScope.$on(api.getName() + '.loading', function(event, isLoading) {
-    vm.isLoading = isLoading;
-  });
-
-  var rmVisibility = $rootScope.$on(api.getName() + '.visibility', function(event, visibility) {
-    vm.visibility = visibility;
-  });
-
-  $scope.$on('$destroy', rmLoading);
-  $scope.$on('$destroy', rmVisibility);
 }
 
 

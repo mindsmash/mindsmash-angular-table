@@ -84,8 +84,8 @@ thead.msm-table-loading-bar > tr > td {
 .msm-table-progress {
   height: 0;
   position: relative;
-  transition: opacity .75s;
-  transition-delay: .25s;
+  transition: opacity .5s;
+  transition-delay: .2s;
   top: -2px;
   opacity: 0; }
 
