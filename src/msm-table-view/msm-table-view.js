@@ -84,6 +84,14 @@ function ViewController($rootScope, $scope, $filter, hotkeys, screenSize) {
     });
   }
 
+  function onFirstActive() {
+    return vm.active === null ? api.lastActive() : api.firstActive();
+  }
+
+  function onLastActive() {
+    return vm.active === null ? api.firstActive() : api.lastActive();
+  }
+
   function onAction(event) {
     return cfg.onAction(vm.rows[api.getActive()], event);
   }
@@ -105,7 +113,7 @@ function ViewController($rootScope, $scope, $filter, hotkeys, screenSize) {
   if (vm.activeEnabled) {
     hotkeys.bindTo($scope).add({
       combo: 'shift+up',
-      callback: replaceDefault(api.firstActive)
+      callback: replaceDefault(onFirstActive)
     }).add({
       combo: 'up',
       callback: replaceDefault(api.previousActive, true)
@@ -114,7 +122,7 @@ function ViewController($rootScope, $scope, $filter, hotkeys, screenSize) {
       callback: replaceDefault(api.nextActive, true)
     }).add({
       combo: 'shift+down',
-      callback: replaceDefault(api.lastActive)
+      callback: replaceDefault(onLastActive)
     }).add({
       combo: 'esc',
       callback: api.clearActive
@@ -140,7 +148,7 @@ function ViewController($rootScope, $scope, $filter, hotkeys, screenSize) {
 
   function replaceDefault(callback, iffActive) {
     return function(event) {
-      if (!iffActive || api.getActive() !== null) {
+      if (!vm.isLoading && (!iffActive || api.getActive() !== null)) {
         event.preventDefault();
         callback();
       }

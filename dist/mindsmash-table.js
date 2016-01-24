@@ -41,10 +41,10 @@ angular.module('mindsmash-table', [
 
 
 angular.module("mindsmash-table").run(['$templateCache', function($templateCache) {$templateCache.put("msm-table-column-selector/msm-table-column-selector.html","<div class=\"btn-group\" uib-dropdown auto-close=\"outsideClick\"><button type=\"button\" class=\"btn btn-default\" uib-dropdown-toggle ng-disabled=\"vm.isLoading\"><span class=\"msm-table-square\"></span> <span class=\"msm-table-square\"></span> <span class=\"msm-table-square\"></span> <span class=\"msm-table-square\"></span> <span class=\"msm-table-square\"></span> <span class=\"msm-table-square\"></span> <span class=\"msm-table-square\"></span> <span class=\"msm-table-square\"></span> <span class=\"msm-table-square\"></span> <span class=\"caret\"></span></button><ul uib-dropdown-menu role=\"menu\"><li ng-repeat=\"col in vm.cols\" role=\"menuitem\" ng-class=\"{ \'disabled\': col.isSticky, \'msm-table-isSelected\': vm.visibility[col.key] }\"><a href=\"#\" ng-click=\"!col.isSticky && vm.select(col.key, $event)\" translate=\"{{ col.name }}\"></a></li></ul></div>");
-$templateCache.put("msm-table-pager/msm-table-pager.html","<uib-pager ng-model=\"vm.page\" total-items=\"vm.itemCount\" items-per-page=\"vm.pageSize\" ng-disabled=\"vm.isLoading\" previous-text=\"{{ \'msmTable.pager.previous\' | translate }}\" next-text=\"{{ \'msmTable.pager.next\' | translate }}\"></uib-pager>");
-$templateCache.put("msm-table-pagination/msm-table-pagination.html","<uib-pagination ng-model=\"vm.page\" total-items=\"vm.itemCount\" items-per-page=\"vm.pageSize\" ng-disabled=\"vm.isLoading\" previous-text=\"{{ \'msmTable.pagination.previous\' | translate }}\" next-text=\"{{ \'msmTable.pagination.next\' | translate }}\" rotate=\"true\" max-size=\"5\"></uib-pagination>");
+$templateCache.put("msm-table-pager/msm-table-pager.html","<uib-pager ng-model=\"vm.page\" total-items=\"vm.rowCount\" items-per-page=\"vm.pageSize\" ng-disabled=\"vm.isLoading\" previous-text=\"{{ \'msmTable.pager.previous\' | translate }}\" next-text=\"{{ \'msmTable.pager.next\' | translate }}\"></uib-pager>");
+$templateCache.put("msm-table-pagination/msm-table-pagination.html","<uib-pagination ng-model=\"vm.page\" total-items=\"vm.rowCount\" items-per-page=\"vm.pageSize\" ng-disabled=\"vm.isLoading\" previous-text=\"{{ \'msmTable.pagination.previous\' | translate }}\" next-text=\"{{ \'msmTable.pagination.next\' | translate }}\" rotate=\"true\" max-size=\"5\"></uib-pagination>");
 $templateCache.put("msm-table-pagination-size/msm-table-pagination-size.html","<div class=\"btn-group\" uib-dropdown><button type=\"button\" class=\"btn btn-default\" uib-dropdown-toggle ng-disabled=\"vm.isLoading\">{{ vm.pageSize }} <span class=\"caret\"></span></button><ul uib-dropdown-menu role=\"menu\"><li ng-repeat=\"pageSize in vm.pageSizes\" role=\"menuitem\" ng-class=\"{ \'msm-table-isSelected\': pageSize === vm.pageSize }\"><a href=\"#\" ng-click=\"vm.select(pageSize, $event)\">{{ pageSize }}</a></li></ul></div>");
-$templateCache.put("msm-table-view/msm-table-view.html","<div><table id=\"{{ vm.name }}\" class=\"table msm-table-table-view\" ng-if=\"!vm.isMobile\" click-outside=\"vm.clearActive()\"><thead><tr><th class=\"msm-table-selector-all\" ng-show=\"vm.selectionEnabled\"></th><th ng-repeat=\"col in vm.cols | filter : vm.visibility[col.key]\" ng-class=\"{\'msm-table-isSortable\': vm.orderByEnabled && col.isSortable !== false,\'msm-table-isSortedAsc\': vm.orderBy.key === col.key && vm.orderBy.asc === true,\'msm-table-isSortedDesc\': vm.orderBy.key === col.key && vm.orderBy.asc === false }\" ng-click=\"vm.orderByEnabled && col.isSortable !== false && vm.setOrderBy(col.key)\" translate=\"{{ col.name }}\"></th></tr></thead><tbody><tr ng-repeat=\"row in vm.rows\" ng-class=\"{ \'msm-table-isActive\': vm.active === $index, \'msm-table-isSelected\': vm.selection[row.id] }\" ng-click=\"vm.activeEnabled && vm.setActive($index)\"><td class=\"msm-table-selector\" ng-show=\"vm.selectionEnabled\" ng-click=\"vm.setSelection(row[vm.selectionKey])\"></td><td ng-repeat=\"col in vm.cols | filter : vm.visibility[col.key]\" data-label=\"{{ col.name }}\" msm-table-view-cell>{{ row[col.key] }}</td></tr></tbody></table><ol class=\"list-unstyled msm-table-list-view\" ng-if=\"vm.isMobile\"><li ng-repeat=\"row in vm.rows\" ng-include=\"vm.mobileTemplateUrl\"></li></ol></div>");}]);
+$templateCache.put("msm-table-view/msm-table-view.html","<div><table id=\"{{ vm.name }}\" class=\"table msm-table-table-view\" ng-class=\"{ \'msm-table-isLoading\': vm.isLoading }\" ng-if=\"!vm.isMobile\" click-outside=\"vm.clearActive()\"><thead><tr><th class=\"msm-table-selector-all\" ng-show=\"vm.selectionEnabled\"></th><th ng-repeat=\"col in vm.cols | filter : vm.visibility[col.key]\" ng-class=\"{\'msm-table-isSortable\': vm.orderByEnabled && col.isSortable !== false,\'msm-table-isSortedAsc\': vm.orderBy.key === col.key && vm.orderBy.asc === true,\'msm-table-isSortedDesc\': vm.orderBy.key === col.key && vm.orderBy.asc === false }\" ng-click=\"vm.orderByEnabled && col.isSortable !== false && vm.setOrderBy(col.key)\" translate=\"{{ col.name }}\"></th></tr></thead><thead class=\"msm-table-loading-bar\"><tr><td colspan=\"{{ vm.cols.length + 1 }}\"><div class=\"msm-table-progress\"><div class=\"msm-table-container\"><div class=\"msm-table-bar msm-table-bar1\"></div><div class=\"msm-table-bar msm-table-bar2\"></div></div></div></td></tr></thead><tbody><tr ng-repeat=\"row in vm.rows\" ng-class=\"{ \'msm-table-isActive\': vm.active === $index, \'msm-table-isSelected\': vm.selection[row.id] }\" ng-click=\"vm.activeEnabled && vm.setActive($index)\"><td class=\"msm-table-selector\" ng-show=\"vm.selectionEnabled\" ng-click=\"vm.setSelection(row[vm.selectionKey])\"></td><td ng-repeat=\"col in vm.cols | filter : vm.visibility[col.key]\" data-label=\"{{ col.name }}\" msm-table-view-cell>{{ row[col.key] }}</td></tr></tbody></table><ol class=\"list-unstyled msm-table-list-view\" ng-if=\"vm.isMobile\"><li ng-repeat=\"row in vm.rows\" ng-include=\"vm.mobileTemplateUrl\"></li></ol></div>");}]);
 
 angular
     .module('mindsmash-table')
@@ -146,11 +146,11 @@ function MsmTable($rootScope, $q, $window, tableName, tableConfig) {
   }();
 
   var tState = angular.extend({
-    active: tableConfig.active,
     page: tableConfig.page,
     pageSize: tableConfig.pageSizes[0],
-    itemCount: 100, // should be named RowCount
+    rowCount: 100, //TODO
     orderBy: tableConfig.orderBy,
+    active: tableConfig.active,
     selection: {},
     visibility: function init() {
       var result = {};
@@ -168,7 +168,7 @@ function MsmTable($rootScope, $q, $window, tableName, tableConfig) {
   vm.getCols = getCols;
   vm.getRows = getRows;
 
-  vm.getItemCount = getItemCount;
+  vm.getRowCount = getRowCount;
 
   vm.reload = reload;
 
@@ -231,8 +231,8 @@ function MsmTable($rootScope, $q, $window, tableName, tableConfig) {
     return tRows;
   }
 
-  function getItemCount() {
-    return tState.itemCount;
+  function getRowCount() {
+    return tState.rowCount;
   }
 
   // -----------
@@ -269,11 +269,11 @@ function MsmTable($rootScope, $q, $window, tableName, tableConfig) {
       notify('items');
 
       /* refresh state */
-      var mappings = {
+      var mappings = { //TODO: check mappings
         number: 'page',
         size: 'pageSize',
-        totalElements: 'itemCount'
-        //TODO: orderBy
+        totalElements: 'rowCount',
+        orderBy: 'orderBy'
       };
       for (var remoteKey in mappings) {
         if (mappings.hasOwnProperty(remoteKey)) {
@@ -824,11 +824,11 @@ function MsmTable($rootScope, $q, $window, tableName, tableConfig) {
   // ----------- Helpers
 
   function getPageCount() {
-    return Math.ceil(tState.itemCount / tState.pageSize);
+    return Math.ceil(tState.rowCount / tState.pageSize);
   }
 
   function getPageItemCount() {
-    return tState.page < getPageCount() - 1 ? tState.pageSize : tState.itemCount % tState.pageSize;
+    return tState.page < getPageCount() - 1 ? tState.pageSize : tState.rowCount % tState.pageSize;
   }
 
   function notify(key, data) {
@@ -922,26 +922,6 @@ function ColumnSelectorController($rootScope, $scope) {
 
 angular
     .module('mindsmash-table')
-    .constant('msmTableConfig', {
-      namespace: 'msmTable',
-      source: angular.noop,
-      columns: [],
-      onAction: angular.noop,
-      onBeforeLoad: angular.identity,
-      onAfterLoad: angular.identity,
-      page: 0,
-      pageSizes: [10, 25, 50, 100],
-      orderBy: null,
-      active: null,
-      selection: 'id',
-      storage: 'session',
-      mobileSize: 'xs',
-      mobileTemplateUrl: null
-    });
-
-
-angular
-    .module('mindsmash-table')
     .directive('msmTablePager', msmTablePager);
 
 /**
@@ -985,7 +965,7 @@ function PagerController($rootScope, $scope) {
   vm.isLoading = false;
   vm.page = api.getPage() + OFFSET;
   vm.pageSize = api.getPageSize();
-  vm.itemCount = api.getItemCount();
+  vm.rowCount = api.getRowCount();
 
   // ==========
 
@@ -1007,15 +987,35 @@ function PagerController($rootScope, $scope) {
     vm.pageSize = pageSize;
   });
 
-  var rmItemCount = $rootScope.$on(api.getName() + '.itemCount', function(event, itemCount) {
-    vm.itemCount = itemCount;
+  var rmRowCount = $rootScope.$on(api.getName() + '.rowCount', function(event, rowCount) {
+    vm.rowCount = rowCount;
   });
 
   $scope.$on('$destroy', rmLoading);
   $scope.$on('$destroy', rmPage);
   $scope.$on('$destroy', rmPageSize);
-  $scope.$on('$destroy', rmItemCount);
+  $scope.$on('$destroy', rmRowCount);
 }
+
+
+angular
+    .module('mindsmash-table')
+    .constant('msmTableConfig', {
+      namespace: 'msmTable',
+      source: angular.noop,
+      columns: [],
+      onAction: angular.noop,
+      onBeforeLoad: angular.identity,
+      onAfterLoad: angular.identity,
+      page: 0,
+      pageSizes: [10, 25, 50, 100],
+      orderBy: null,
+      active: null,
+      selection: 'id',
+      storage: 'session',
+      mobileSize: 'xs',
+      mobileTemplateUrl: null
+    });
 
 
 angular
@@ -1062,7 +1062,7 @@ function PaginationController($rootScope, $scope) {
   vm.isLoading = false;
   vm.page = api.getPage() + OFFSET;
   vm.pageSize = api.getPageSize();
-  vm.itemCount = api.getItemCount();
+  vm.rowCount = api.getRowCount();
 
   // ==========
 
@@ -1084,14 +1084,14 @@ function PaginationController($rootScope, $scope) {
     vm.pageSize = pageSize;
   });
 
-  var rmItemCount = $rootScope.$on(api.getName() + '.itemCount', function(event, itemCount) {
-    vm.itemCount = itemCount;
+  var rmRowCount = $rootScope.$on(api.getName() + '.rowCount', function(event, rowCount) {
+    vm.rowCount = rowCount;
   });
 
   $scope.$on('$destroy', rmLoading);
   $scope.$on('$destroy', rmPage);
   $scope.$on('$destroy', rmPageSize);
-  $scope.$on('$destroy', rmItemCount);
+  $scope.$on('$destroy', rmRowCount);
 }
 
 
@@ -1145,6 +1145,7 @@ function PaginationSizeController($rootScope, $scope) {
 
   function select(pageSize, event) {
     event.preventDefault();
+    vm.pageSize = pageSize; // optimistic update
     api.setPageSize(pageSize);
   }
 
@@ -1249,6 +1250,14 @@ function ViewController($rootScope, $scope, $filter, hotkeys, screenSize) {
     });
   }
 
+  function onFirstActive() {
+    return vm.active === null ? api.lastActive() : api.firstActive();
+  }
+
+  function onLastActive() {
+    return vm.active === null ? api.firstActive() : api.lastActive();
+  }
+
   function onAction(event) {
     return cfg.onAction(vm.rows[api.getActive()], event);
   }
@@ -1270,7 +1279,7 @@ function ViewController($rootScope, $scope, $filter, hotkeys, screenSize) {
   if (vm.activeEnabled) {
     hotkeys.bindTo($scope).add({
       combo: 'shift+up',
-      callback: replaceDefault(api.firstActive)
+      callback: replaceDefault(onFirstActive)
     }).add({
       combo: 'up',
       callback: replaceDefault(api.previousActive, true)
@@ -1279,7 +1288,7 @@ function ViewController($rootScope, $scope, $filter, hotkeys, screenSize) {
       callback: replaceDefault(api.nextActive, true)
     }).add({
       combo: 'shift+down',
-      callback: replaceDefault(api.lastActive)
+      callback: replaceDefault(onLastActive)
     }).add({
       combo: 'esc',
       callback: api.clearActive
@@ -1305,7 +1314,7 @@ function ViewController($rootScope, $scope, $filter, hotkeys, screenSize) {
 
   function replaceDefault(callback, iffActive) {
     return function(event) {
-      if (!iffActive || api.getActive() !== null) {
+      if (!vm.isLoading && (!iffActive || api.getActive() !== null)) {
         event.preventDefault();
         callback();
       }

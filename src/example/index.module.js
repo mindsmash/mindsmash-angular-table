@@ -57,6 +57,7 @@
 
         // ==========
 
+        var delay = 2000;
         var data = generate(55);
 
         function source(params) {
@@ -75,7 +76,7 @@
                 totalElements: data.length,
                 totalPages: Math.ceil(data.length / params.pageSize)
               });
-            }, 250);
+            }, delay);
           });
         }
 

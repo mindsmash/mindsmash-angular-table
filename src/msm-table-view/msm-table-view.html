@@ -1,6 +1,7 @@
 <div>
   <table id="{{ vm.name }}"
          class="table msm-table-table-view"
+         ng-class="{ 'msm-table-isLoading': vm.isLoading }"
          ng-if="!vm.isMobile"
          click-outside="vm.clearActive()">
     <thead>
@@ -15,6 +16,18 @@
             ng-click="vm.orderByEnabled && col.isSortable !== false && vm.setOrderBy(col.key)"
             translate="{{ col.name }}">
         </th>
+      </tr>
+    </thead>
+    <thead class="msm-table-loading-bar">
+      <tr>
+        <td colspan="{{ vm.cols.length + 1 }}">
+          <div class="msm-table-progress">
+            <div class="msm-table-container">
+              <div class="msm-table-bar msm-table-bar1"></div>
+              <div class="msm-table-bar msm-table-bar2"></div>
+            </div>
+          </div>
+        </td>
       </tr>
     </thead>
     <tbody>

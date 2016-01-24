@@ -97,11 +97,11 @@ function MsmTable($rootScope, $q, $window, tableName, tableConfig) {
   }();
 
   var tState = angular.extend({
-    active: tableConfig.active,
     page: tableConfig.page,
     pageSize: tableConfig.pageSizes[0],
-    itemCount: 100, // should be named RowCount
+    rowCount: 100, //TODO
     orderBy: tableConfig.orderBy,
+    active: tableConfig.active,
     selection: {},
     visibility: function init() {
       var result = {};
@@ -119,7 +119,7 @@ function MsmTable($rootScope, $q, $window, tableName, tableConfig) {
   vm.getCols = getCols;
   vm.getRows = getRows;
 
-  vm.getItemCount = getItemCount;
+  vm.getRowCount = getRowCount;
 
   vm.reload = reload;
 
@@ -182,8 +182,8 @@ function MsmTable($rootScope, $q, $window, tableName, tableConfig) {
     return tRows;
   }
 
-  function getItemCount() {
-    return tState.itemCount;
+  function getRowCount() {
+    return tState.rowCount;
   }
 
   // -----------
@@ -220,11 +220,11 @@ function MsmTable($rootScope, $q, $window, tableName, tableConfig) {
       notify('items');
 
       /* refresh state */
-      var mappings = {
+      var mappings = { //TODO: check mappings
         number: 'page',
         size: 'pageSize',
-        totalElements: 'itemCount'
-        //TODO: orderBy
+        totalElements: 'rowCount',
+        orderBy: 'orderBy'
       };
       for (var remoteKey in mappings) {
         if (mappings.hasOwnProperty(remoteKey)) {
@@ -775,11 +775,11 @@ function MsmTable($rootScope, $q, $window, tableName, tableConfig) {
   // ----------- Helpers
 
   function getPageCount() {
-    return Math.ceil(tState.itemCount / tState.pageSize);
+    return Math.ceil(tState.rowCount / tState.pageSize);
   }
 
   function getPageItemCount() {
-    return tState.page < getPageCount() - 1 ? tState.pageSize : tState.itemCount % tState.pageSize;
+    return tState.page < getPageCount() - 1 ? tState.pageSize : tState.rowCount % tState.pageSize;
   }
 
   function notify(key, data) {

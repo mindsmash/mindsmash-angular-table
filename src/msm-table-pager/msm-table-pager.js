@@ -43,7 +43,7 @@ function PagerController($rootScope, $scope) {
   vm.isLoading = false;
   vm.page = api.getPage() + OFFSET;
   vm.pageSize = api.getPageSize();
-  vm.itemCount = api.getItemCount();
+  vm.rowCount = api.getRowCount();
 
   // ==========
 
@@ -65,12 +65,12 @@ function PagerController($rootScope, $scope) {
     vm.pageSize = pageSize;
   });
 
-  var rmItemCount = $rootScope.$on(api.getName() + '.itemCount', function(event, itemCount) {
-    vm.itemCount = itemCount;
+  var rmRowCount = $rootScope.$on(api.getName() + '.rowCount', function(event, rowCount) {
+    vm.rowCount = rowCount;
   });
 
   $scope.$on('$destroy', rmLoading);
   $scope.$on('$destroy', rmPage);
   $scope.$on('$destroy', rmPageSize);
-  $scope.$on('$destroy', rmItemCount);
+  $scope.$on('$destroy', rmRowCount);
 }

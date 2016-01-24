@@ -48,6 +48,7 @@ function PaginationSizeController($rootScope, $scope) {
 
   function select(pageSize, event) {
     event.preventDefault();
+    vm.pageSize = pageSize; // optimistic update
     api.setPageSize(pageSize);
   }
 
