@@ -1,6 +1,6 @@
 {
   "name": "mindsmash-table",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "A data table for AngularJS.",
   "license": "MIT",
   "author": "mindsmash GmbH",
@@ -11,7 +11,7 @@
     }
   ],
   "keywords": [],
-  "main": "mindsmash-table.js",
+  "main": "dist/mindsmash-table.js",
   "scripts": {
     "test": "gulp test",
     "build": "gulp build",

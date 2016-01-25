@@ -1,9 +1,12 @@
 {
   "name": "mindsmash-table",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "A data table for AngularJS.",
   "license": "MIT",
-  "main": "mindsmash-table.js",
+  "main": [
+    "dist/mindsmash-table.js",
+    "dist/mindsmash-table.css"
+  ],
   "ignore": [
     "**/.*",
     "bower_components",
