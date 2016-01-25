@@ -1,6 +1,6 @@
 {
   "name": "mindsmash-table",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "A data table for AngularJS.",
   "license": "MIT",
   "main": "mindsmash-table.js",
