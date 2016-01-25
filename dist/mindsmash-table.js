@@ -945,6 +945,26 @@ function MsmTable($rootScope, $filter, $q, $window, tableName, tableConfig) {
 
 angular
     .module('mindsmash-table')
+    .constant('msmTableConfig', {
+      namespace: 'msmTable',
+      source: angular.noop,
+      columns: [],
+      onAction: angular.noop,
+      onBeforeLoad: angular.identity,
+      onAfterLoad: angular.identity,
+      page: 0,
+      pageSizes: [10, 25, 50, 100],
+      orderBy: null,
+      active: null,
+      selection: 'id',
+      storage: 'session',
+      mobileSize: 'xs',
+      mobileTemplateUrl: null
+    });
+
+
+angular
+    .module('mindsmash-table')
     .directive('msmTablePager', msmTablePager);
 
 /**
@@ -1019,26 +1039,6 @@ function PagerController($rootScope, $scope) {
   $scope.$on('$destroy', rmPageSize);
   $scope.$on('$destroy', rmRowCount);
 }
-
-
-angular
-    .module('mindsmash-table')
-    .constant('msmTableConfig', {
-      namespace: 'msmTable',
-      source: angular.noop,
-      columns: [],
-      onAction: angular.noop,
-      onBeforeLoad: angular.identity,
-      onAfterLoad: angular.identity,
-      page: 0,
-      pageSizes: [10, 25, 50, 100],
-      orderBy: null,
-      active: null,
-      selection: 'id',
-      storage: 'session',
-      mobileSize: 'xs',
-      mobileTemplateUrl: null
-    });
 
 
 angular
