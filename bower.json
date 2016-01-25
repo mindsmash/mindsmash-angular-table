@@ -1,6 +1,6 @@
 {
   "name": "mindsmash-table",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "A data table for AngularJS.",
   "license": "MIT",
   "main": "mindsmash-table.js",
@@ -11,8 +11,8 @@
     "test"
   ],
   "dependencies": {
-    "angular": "~1.4.8",
-    "angular-bootstrap": "~1.0.3",
+    "angular": "~1.4.9",
+    "angular-bootstrap": "~1.1.0",
     "angular-click-outside": "~2.2.1",
     "angular-hotkeys": "mindsmash/angular-hotkeys",
     "angular-media-queries": "~0.5.0",
@@ -20,8 +20,8 @@
     "bootstrap": "~3.3.4"
   },
   "devDependencies": {
-    "angular-animate": "^1.4.8",
-    "angular-mocks": "^1.4.8",
+    "angular-animate": "^1.4.9",
+    "angular-mocks": "^1.4.9",
     "bootstrap-sass": "~3.3.5",
     "chance": "~0.8.0",
     "marked": "~0.3.5"
