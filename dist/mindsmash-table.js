@@ -1,6 +1,6 @@
 /**
  * @name mindsmash-table
- * @version v0.3.3
+ * @version v0.3.4
  * @author mindsmash GmbH
  * @license MIT
  */
@@ -21,10 +21,10 @@
  * ## Usage
  * TODO
  */
-MsmTableFactoryProvider.$inject = ['msmTableConfig', '$translateProvider'];
 ColumnSelectorController.$inject = ['$rootScope', '$scope'];
-PaginationController.$inject = ['$rootScope', '$scope'];
+MsmTableFactoryProvider.$inject = ['msmTableConfig', '$translateProvider'];
 PagerController.$inject = ['$rootScope', '$scope'];
+PaginationController.$inject = ['$rootScope', '$scope'];
 PaginationSizeController.$inject = ['$rootScope', '$scope'];
 ViewController.$inject = ['$rootScope', '$scope', '$filter', 'hotkeys', 'screenSize'];
 msmTableViewCell.$inject = ['$compile', '$templateRequest'];
@@ -40,11 +40,89 @@ angular.module('mindsmash-table', [
 ]);
 
 
-angular.module("mindsmash-table").run(['$templateCache', function($templateCache) {$templateCache.put("msm-table-column-selector/msm-table-column-selector.html","<div class=\"btn-group\" uib-dropdown auto-close=\"outsideClick\"><button type=\"button\" class=\"btn btn-default\" uib-dropdown-toggle ng-disabled=\"vm.isLoading\"><span class=\"msm-table-square\"></span> <span class=\"msm-table-square\"></span> <span class=\"msm-table-square\"></span> <span class=\"msm-table-square\"></span> <span class=\"msm-table-square\"></span> <span class=\"msm-table-square\"></span> <span class=\"msm-table-square\"></span> <span class=\"msm-table-square\"></span> <span class=\"msm-table-square\"></span> <span class=\"caret\"></span></button><ul uib-dropdown-menu role=\"menu\"><li ng-repeat=\"col in vm.cols\" role=\"menuitem\" ng-class=\"{ \'disabled\': col.sticky, \'msm-table-isSelected\': vm.visibility[col.key] }\"><a href=\"#\" ng-click=\"!col.sticky && vm.select(col.key, $event)\" translate=\"{{ col.name }}\"></a></li></ul></div>");
-$templateCache.put("msm-table-pager/msm-table-pager.html","<uib-pager ng-model=\"vm.page\" total-items=\"vm.rowCount\" items-per-page=\"vm.pageSize\" ng-disabled=\"vm.isLoading\" previous-text=\"{{ \'msmTable.pager.previous\' | translate }}\" next-text=\"{{ \'msmTable.pager.next\' | translate }}\"></uib-pager>");
+angular.module("mindsmash-table").run(['$templateCache', function($templateCache) {$templateCache.put("msm-table-pager/msm-table-pager.html","<uib-pager ng-model=\"vm.page\" total-items=\"vm.rowCount\" items-per-page=\"vm.pageSize\" ng-disabled=\"vm.isLoading\" previous-text=\"{{ \'msmTable.pager.previous\' | translate }}\" next-text=\"{{ \'msmTable.pager.next\' | translate }}\"></uib-pager>");
+$templateCache.put("msm-table-column-selector/msm-table-column-selector.html","<div class=\"btn-group\" uib-dropdown auto-close=\"outsideClick\"><button type=\"button\" class=\"btn btn-default\" uib-dropdown-toggle ng-disabled=\"vm.isLoading\"><span class=\"msm-table-square\"></span> <span class=\"msm-table-square\"></span> <span class=\"msm-table-square\"></span> <span class=\"msm-table-square\"></span> <span class=\"msm-table-square\"></span> <span class=\"msm-table-square\"></span> <span class=\"msm-table-square\"></span> <span class=\"msm-table-square\"></span> <span class=\"msm-table-square\"></span> <span class=\"caret\"></span></button><ul uib-dropdown-menu role=\"menu\"><li ng-repeat=\"col in vm.cols\" role=\"menuitem\" ng-class=\"{ \'disabled\': col.sticky, \'msm-table-isSelected\': vm.visibility[col.key] }\"><a href=\"#\" ng-click=\"!col.sticky && vm.select(col.key, $event)\" translate=\"{{ col.name }}\"></a></li></ul></div>");
 $templateCache.put("msm-table-pagination/msm-table-pagination.html","<uib-pagination ng-show=\"vm.pageSize < vm.rowCount\" ng-model=\"vm.page\" total-items=\"vm.rowCount\" items-per-page=\"vm.pageSize\" ng-disabled=\"vm.isLoading\" previous-text=\"{{ \'msmTable.pagination.previous\' | translate }}\" next-text=\"{{ \'msmTable.pagination.next\' | translate }}\" rotate=\"true\" max-size=\"5\"></uib-pagination>");
 $templateCache.put("msm-table-pagination-size/msm-table-pagination-size.html","<div class=\"btn-group\" uib-dropdown><button type=\"button\" class=\"btn btn-default\" uib-dropdown-toggle ng-disabled=\"vm.isLoading\">{{ vm.pageSize }} <span class=\"caret\"></span></button><ul uib-dropdown-menu role=\"menu\"><li ng-repeat=\"pageSize in vm.pageSizes\" role=\"menuitem\" ng-class=\"{ \'msm-table-isSelected\': pageSize === vm.pageSize }\"><a href=\"#\" ng-click=\"vm.select(pageSize, $event)\">{{ pageSize }}</a></li></ul></div>");
 $templateCache.put("msm-table-view/msm-table-view.html","<div><table id=\"{{ vm.name }}\" class=\"table msm-table-table-view\" ng-class=\"{ \'msm-table-isLoading\': vm.isLoading }\" ng-if=\"!vm.isMobile\" click-outside=\"vm.clearActive()\"><thead><tr><th class=\"msm-table-selector-all\" ng-show=\"vm.selectionEnabled\"></th><th ng-repeat=\"col in vm.cols | filter : vm.visibility[col.key]\" ng-class=\"{\'msm-table-isSortable\': vm.orderByEnabled && col.sort !== false,\'msm-table-isSortedAsc\': vm.orderBy.key === (col.sort || col.key) && vm.orderBy.asc === true,\'msm-table-isSortedDesc\': vm.orderBy.key === (col.sort || col.key) && vm.orderBy.asc === false }\" ng-click=\"vm.orderByEnabled && col.sort !== false && vm.setOrderBy(col.sort || col.key)\" translate=\"{{ col.name }}\"></th></tr></thead><thead class=\"msm-table-loading-bar\"><tr><th colspan=\"{{ vm.cols.length + 1 }}\"><div class=\"msm-table-progress\"><div class=\"msm-table-container\"><div class=\"msm-table-bar msm-table-bar1\"></div><div class=\"msm-table-bar msm-table-bar2\"></div></div></div></th></tr></thead><tbody><tr ng-repeat=\"row in vm.rows\" ng-class=\"{ \'msm-table-isActive\': vm.active === $index, \'msm-table-isSelected\': vm.selection[row.id] }\" ng-click=\"vm.activeEnabled && vm.setActive($index)\"><td class=\"msm-table-selector\" ng-show=\"vm.selectionEnabled\" ng-click=\"vm.setSelection(row[vm.selectionKey])\"></td><td ng-repeat=\"col in vm.cols | filter : vm.visibility[col.key]\" data-label=\"{{ col.name | translate }}\" msm-table-view-cell>{{ row[col.key] }}</td></tr></tbody></table><ol class=\"list-unstyled msm-table-list-view\" ng-if=\"vm.isMobile\"><li ng-repeat=\"row in vm.rows\" ng-include=\"vm.mobileTemplateUrl\"></li></ol></div>");}]);
+
+angular
+    .module('mindsmash-table')
+    .directive('msmTableColumnSelector', msmTableColumnSelector);
+
+/**
+ * @ngdoc directive
+ * @name mindsmash-table.directive:msmTableColumnSelector
+ * @restrict E
+ * @scope
+ *
+ * @description
+ * This directive renders a column selector.
+ *
+ * # Configuration
+ * This directive is configured via the {@link mindsmash-table.msmTable MsmTable} API instance or the default parameters
+ * set in the {@link mindsmash-table.msmTableFactoryProvider MsmTableFactoryProvider}. Valid configuration values are
+ * described in the {@link mindsmash-table.msmTable MsmTable} configuration section.
+ *
+ * @param {expression} api A {@link mindsmash-table.msmTable MsmTable} API instance.
+ */
+function msmTableColumnSelector() {
+  return {
+    restrict: 'E',
+    controller: ColumnSelectorController,
+    controllerAs: 'vm',
+    templateUrl: 'msm-table-column-selector/msm-table-column-selector.html',
+    scope: {
+      api: '&'
+    }
+  };
+}
+
+function ColumnSelectorController($rootScope, $scope) {
+  var vm = this;
+
+  var api = $scope.api();
+  var cfg = api.getConfig();
+
+  // ==========
+
+  vm.isLoading = false;
+  vm.cols = cfg.columns;
+  vm.visibility = api.getVisibility();
+
+  vm.select = select;
+
+  // ==========
+
+  function select(key, event) {
+    event.preventDefault();
+
+    var toggleable = !vm.visibility[key];
+    if (!toggleable) {
+      var vKeys = Object.keys(vm.visibility);
+      while (!toggleable && vKeys.length > 0) {
+        var vKey = vKeys.shift();
+        toggleable = vKey !== key && vm.visibility[vKey];
+      }
+    }
+
+    if (toggleable) {
+      return api.setVisibility(key);
+    }
+  }
+
+  var rmLoading = $rootScope.$on(api.getName() + '.loading', function(event, isLoading) {
+    vm.isLoading = isLoading;
+  });
+
+  var rmVisibility = $rootScope.$on(api.getName() + '.visibility', function(event, visibility) {
+    vm.visibility = visibility;
+  });
+
+  $scope.$on('$destroy', rmLoading);
+  $scope.$on('$destroy', rmVisibility);
+}
+
 
 angular
     .module('mindsmash-table')
@@ -919,84 +997,6 @@ function MsmTable($rootScope, $filter, $q, $window, tableName, tableConfig) {
 
 angular
     .module('mindsmash-table')
-    .directive('msmTableColumnSelector', msmTableColumnSelector);
-
-/**
- * @ngdoc directive
- * @name mindsmash-table.directive:msmTableColumnSelector
- * @restrict E
- * @scope
- *
- * @description
- * This directive renders a column selector.
- *
- * # Configuration
- * This directive is configured via the {@link mindsmash-table.msmTable MsmTable} API instance or the default parameters
- * set in the {@link mindsmash-table.msmTableFactoryProvider MsmTableFactoryProvider}. Valid configuration values are
- * described in the {@link mindsmash-table.msmTable MsmTable} configuration section.
- *
- * @param {expression} api A {@link mindsmash-table.msmTable MsmTable} API instance.
- */
-function msmTableColumnSelector() {
-  return {
-    restrict: 'E',
-    controller: ColumnSelectorController,
-    controllerAs: 'vm',
-    templateUrl: 'msm-table-column-selector/msm-table-column-selector.html',
-    scope: {
-      api: '&'
-    }
-  };
-}
-
-function ColumnSelectorController($rootScope, $scope) {
-  var vm = this;
-
-  var api = $scope.api();
-  var cfg = api.getConfig();
-
-  // ==========
-
-  vm.isLoading = false;
-  vm.cols = cfg.columns;
-  vm.visibility = api.getVisibility();
-
-  vm.select = select;
-
-  // ==========
-
-  function select(key, event) {
-    event.preventDefault();
-
-    var toggleable = !vm.visibility[key];
-    if (!toggleable) {
-      var vKeys = Object.keys(vm.visibility);
-      while (!toggleable && vKeys.length > 0) {
-        var vKey = vKeys.shift();
-        toggleable = vKey !== key && vm.visibility[vKey];
-      }
-    }
-
-    if (toggleable) {
-      return api.setVisibility(key);
-    }
-  }
-
-  var rmLoading = $rootScope.$on(api.getName() + '.loading', function(event, isLoading) {
-    vm.isLoading = isLoading;
-  });
-
-  var rmVisibility = $rootScope.$on(api.getName() + '.visibility', function(event, visibility) {
-    vm.visibility = visibility;
-  });
-
-  $scope.$on('$destroy', rmLoading);
-  $scope.$on('$destroy', rmVisibility);
-}
-
-
-angular
-    .module('mindsmash-table')
     .constant('msmTableConfig', {
 
       /* The table' namespace: events, storage, etc. */
@@ -1048,16 +1048,17 @@ angular
 
 angular
     .module('mindsmash-table')
-    .directive('msmTablePagination', msmTablePagination);
+    .directive('msmTablePager', msmTablePager);
 
 /**
  * @ngdoc directive
- * @name mindsmash-table.directive:msmTablePagination
+ * @name mindsmash-table.directive:msmTablePager
  * @restrict E
  * @scope
  *
  * @description
- * This directive renders a pagination component.
+ * This directive renders a lightweight pager that is focused on providing
+ * previous/next paging functionality.
  *
  * # Configuration
  * This directive is configured via the {@link mindsmash-table.msmTable MsmTable} API instance or the default parameters
@@ -1066,19 +1067,19 @@ angular
  *
  * @param {expression} api A {@link mindsmash-table.msmTable MsmTable} API instance.
  */
-function msmTablePagination() {
+function msmTablePager() {
   return {
     restrict: 'E',
-    controller: PaginationController,
+    controller: PagerController,
     controllerAs: 'vm',
-    templateUrl: 'msm-table-pagination/msm-table-pagination.html',
+    templateUrl: 'msm-table-pager/msm-table-pager.html',
     scope: {
       api: '&'
     }
   };
 }
 
-function PaginationController($rootScope, $scope) {
+function PagerController($rootScope, $scope) {
   var vm = this;
   var OFFSET = 1;
 
@@ -1127,17 +1128,16 @@ function PaginationController($rootScope, $scope) {
 
 angular
     .module('mindsmash-table')
-    .directive('msmTablePager', msmTablePager);
+    .directive('msmTablePagination', msmTablePagination);
 
 /**
  * @ngdoc directive
- * @name mindsmash-table.directive:msmTablePager
+ * @name mindsmash-table.directive:msmTablePagination
  * @restrict E
  * @scope
  *
  * @description
- * This directive renders a lightweight pager that is focused on providing
- * previous/next paging functionality.
+ * This directive renders a pagination component.
  *
  * # Configuration
  * This directive is configured via the {@link mindsmash-table.msmTable MsmTable} API instance or the default parameters
@@ -1146,19 +1146,19 @@ angular
  *
  * @param {expression} api A {@link mindsmash-table.msmTable MsmTable} API instance.
  */
-function msmTablePager() {
+function msmTablePagination() {
   return {
     restrict: 'E',
-    controller: PagerController,
+    controller: PaginationController,
     controllerAs: 'vm',
-    templateUrl: 'msm-table-pager/msm-table-pager.html',
+    templateUrl: 'msm-table-pagination/msm-table-pagination.html',
     scope: {
       api: '&'
     }
   };
 }
 
-function PagerController($rootScope, $scope) {
+function PaginationController($rootScope, $scope) {
   var vm = this;
   var OFFSET = 1;
 
