@@ -27,7 +27,7 @@ function MsmTableFactoryProvider(msmTableConfig, $translateProvider) {
   // ==========
 
   function defaultTableConfig(config) {
-    angular.merge(tableConfig, config);
+    angular.extend({}, tableConfig, config);
   }
 
   function $get($rootScope, $filter, $q, $window) {
@@ -63,7 +63,7 @@ function MsmTableFactory($rootScope, $filter, $q, $window, tableConfig) {
   // ==========
 
   function get(name, config) {
-    return new MsmTable($rootScope, $filter, $q, $window, name, angular.merge(tableConfig, config));
+    return new MsmTable($rootScope, $filter, $q, $window, name, angular.extend({}, tableConfig, config));
   }
 }
 
