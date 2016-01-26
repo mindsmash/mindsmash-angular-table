@@ -10,6 +10,10 @@
         $translateProvider.useSanitizeValueStrategy(null);
         $translateProvider.preferredLanguage('en');
         $translateProvider.translations('en', {
+          'msmTable.pagination.previous': '«',
+          'msmTable.pagination.next': '»',
+          'msmTable.pager.previous': '« Previous',
+          'msmTable.pager.next': 'Next »',
           'id': 'ID',
           'firstName': 'First Name',
           'lastName': 'Last Name',
@@ -42,16 +46,16 @@
             return data;
           },
           columns: [
-            { key: 'id', name: 'id', isHidden: true },
-            { key: 'firstName', name: 'firstName', isSticky: true, isSortable: false },
-            { key: 'lastName', name: 'lastName', isSticky: true },
+            { key: 'id', name: 'id', show: false },
+            { key: 'firstName', name: 'firstName', sticky: true, sort: false },
+            { key: 'lastName', name: 'lastName', sticky: true },
             { key: 'age', name: 'age', template: '{{ row.age }} yrs' },
             { key: 'birthday', name: 'birthday', templateUrl: 'templates/cell.birthday.html' },
-            { key: 'address', name: 'address', isHidden: true },
-            { key: 'city', name: 'city', isHidden: true },
-            { key: 'country', name: 'country', isHidden: true },
-            { key: 'phone', name: 'phone', isHidden: true },
-            { key: 'about', name: 'about', isHidden: true }],
+            { key: 'address', name: 'address', show: false },
+            { key: 'city', name: 'city', show: false },
+            { key: 'country', name: 'country', show: false },
+            { key: 'phone', name: 'phone', show: false },
+            { key: 'about', name: 'about', show: false }],
           mobileTemplateUrl: 'templates/row.mobile.html'
         });
 

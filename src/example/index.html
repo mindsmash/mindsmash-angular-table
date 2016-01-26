@@ -16,12 +16,9 @@
         <div class="panel-body">
           <msm-table-pager api="vm.api"></msm-table-pager>
           <msm-table-view api="vm.api"></msm-table-view>
-          <msm-table-pagination api="vm.api"></msm-table-pagination>
-        </div>
-        <div class="panel-footer">
-          <a href="" ng-click="vm.api.reload()">Reload</a> |
-          <a href="" ng-click="vm.api.setPage(1)">2<sup>nd</sup> Page</a> |
-          <a href="" ng-click="vm.api.setSelection(3)">3<sup>rd</sup> Selection</a>
+          <div class="text-center">
+            <msm-table-pagination api="vm.api"></msm-table-pagination>
+          </div>
         </div>
       </div>
     </div>

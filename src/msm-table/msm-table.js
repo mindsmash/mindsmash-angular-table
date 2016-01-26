@@ -12,12 +12,12 @@ angular
 function MsmTableFactoryProvider(msmTableConfig, $translateProvider) {
   var tableConfig = msmTableConfig;
 
-  $translateProvider.translations('en', {
-    'msmTable.pagination.previous': '«',
-    'msmTable.pagination.next': '»',
-    'msmTable.pager.previous': '« Previous',
-    'msmTable.pager.next': 'Next »'
-  });
+  //$translateProvider.translations('en_US', {
+  //  'msmTable.pagination.previous': '«',
+  //  'msmTable.pagination.next': '»',
+  //  'msmTable.pager.previous': '« Previous',
+  //  'msmTable.pager.next': 'Next »'
+  //});
 
   return {
     setTableConfig: defaultTableConfig,
@@ -83,34 +83,12 @@ function MsmTableFactory($rootScope, $filter, $q, $window, tableConfig) {
 function MsmTable($rootScope, $filter, $q, $window, tableName, tableConfig) {
   var vm = this;
 
-  var tName = tableConfig.namespace + '.' + tableName;
-  var tCols = tableConfig.columns;
-  var tRows = [];
-
-  var tStorage = function() {
-    if (tableConfig.storage === 'session') {
-      return sessionStorage;
-    } else if (tableConfig.storage === 'local') {
-      return localStorage;
-    }
-    return null;
-  }();
-
-  var tState = angular.extend({
-    page: tableConfig.page,
-    pageSize: tableConfig.pageSizes[0],
-    rowCount: 100, //TODO
-    orderBy: tableConfig.orderBy,
-    active: tableConfig.active,
-    selection: {},
-    visibility: function init() {
-      var result = {};
-      for (var i = 0; i < tCols.length; i++) {
-        result[tCols[i].key] = !tCols[i].isHidden;
-      }
-      return result;
-    }()
-  }, loadState());
+  var tName = initName();
+  var tCols = initCols();
+  var tRows = initRows();
+  var tParams = initParams();
+  var tStorage = initStorage();
+  var tState = initState();
 
   // ==========
 
@@ -118,10 +96,13 @@ function MsmTable($rootScope, $filter, $q, $window, tableName, tableConfig) {
   vm.getName = getName;
   vm.getCols = getCols;
   vm.getRows = getRows;
-
   vm.getRowCount = getRowCount;
 
   vm.reload = reload;
+
+  vm.getParam = getParam;
+  vm.setParam = setParam;
+  vm.clearParam = clearParam;
 
   vm.getPage = getPage;
   vm.setPage = setPage;
@@ -131,6 +112,9 @@ function MsmTable($rootScope, $filter, $q, $window, tableName, tableConfig) {
   vm.lastPage = lastPage;
   vm.getPageSize = getPageSize;
   vm.setPageSize = setPageSize;
+
+  vm.getVisibility = getVisibility;
+  vm.setVisibility = setVisibility;
 
   if (tableConfig.orderBy !== false) {
     vm.getOrderBy = getOrderBy;
@@ -148,9 +132,6 @@ function MsmTable($rootScope, $filter, $q, $window, tableName, tableConfig) {
     vm.clearActive = clearActive;
   }
 
-  vm.getVisibility = getVisibility;
-  vm.setVisibility = setVisibility;
-
   if (tableConfig.selection !== false) {
     vm.getSelection = getSelection;
     vm.setSelection = setSelection;
@@ -162,6 +143,7 @@ function MsmTable($rootScope, $filter, $q, $window, tableName, tableConfig) {
 
   // ----------
 
+  tableConfig.onInit(vm);
   vm.reload();
 
   // ==========
@@ -188,37 +170,6 @@ function MsmTable($rootScope, $filter, $q, $window, tableName, tableConfig) {
 
   // -----------
 
-  function getParams() {
-    var params = {
-      page: tState.page,
-      pageSize: tState.pageSize
-    };
-    if (tState.orderBy) {
-      params.orderBy = tState.orderBy.key;
-      params.orderAsc = tState.orderBy.asc;
-    }
-    return params;
-  }
-
-  function getLocalData(params) {
-    var data = tableConfig.source;
-    return $q(function(resolve) {
-      var from = params.page * params.pageSize;
-      var to = from + params.pageSize;
-      var items = params.orderBy ? $filter('orderBy')(data, params.orderBy, !params.orderAsc) : data;
-      items = items.slice(from, to);
-      resolve({
-        content: items,
-        number: params.page,
-        numberOfElements: items.length,
-        size: params.pageSize,
-        sort: params.orderBy,
-        totalElements: data.length,
-        totalPages: Math.ceil(data.length / params.pageSize)
-      });
-    });
-  }
-
   /**
    * @ngdoc method
    * @name reload
@@ -230,30 +181,41 @@ function MsmTable($rootScope, $filter, $q, $window, tableName, tableConfig) {
    * @returns {Promise} A table resource promise.
    */
   function reload() {
-    var params = tableConfig.onBeforeLoad(getParams());
-    var data = angular.isArray(tableConfig.source) ? getLocalData(params) : tableConfig.source(params);
+    var params = tableConfig.onBeforeLoad(angular.extend({
+      page: tState.page,
+      size: tState.pageSize,
+      sort: tState.orderBy ? tState.orderBy.key + (tState.orderBy.asc ? ',asc' : ',desc') : null
+    }, tParams), vm);
+    var data = angular.isArray(tableConfig.source) ? fromLocalData(params) : tableConfig.source(params);
 
     notify('loading', true);
 
     return data.then(function(response) {
-      response = tableConfig.onAfterLoad(response);
+      response = tableConfig.onAfterLoad(response, vm);
 
       /* refresh content */
       tRows = response.content;
       notify('items');
 
       /* refresh state */
-      var mappings = { //TODO: check mappings
-        number: 'page',
-        size: 'pageSize',
-        totalElements: 'rowCount',
-        orderBy: 'orderBy'
+      var mappings = {
+        page: 'number',
+        pageSize: 'size',
+        rowCount: 'totalElements',
+        orderBy: function(response) {
+          if (response.sort && response.sort.length) {
+            var orderBy = response.sort[0];
+            return { key: orderBy.property, asc: orderBy.ascending };
+          }
+          return null;
+        }
       };
-      for (var remoteKey in mappings) {
-        if (mappings.hasOwnProperty(remoteKey)) {
-          var localKey = mappings[remoteKey];
-          var remoteValue = response[remoteKey];
-          if (tState[localKey] !== remoteValue) {
+      for (var localKey in mappings) {
+        if (mappings.hasOwnProperty(localKey)) {
+          var localValue = tState[localKey];
+          var remoteKey = mappings[localKey];
+          var remoteValue = angular.isFunction(remoteKey) ? remoteKey(response) : response[remoteKey];
+          if (!angular.equals(localValue, remoteValue)) {
             tState[localKey] = remoteValue;
             notify(localKey, remoteValue);
           }
@@ -286,6 +248,24 @@ function MsmTable($rootScope, $filter, $q, $window, tableName, tableConfig) {
         pageSize: tState.pageSize,
         orderBy: tState.orderBy
       });
+    }
+  }
+
+  // ----------- Additional Parameters
+
+  function getParam(key) {
+    return angular.isDefined(key) ? tParams[key] : tParams;
+  }
+
+  function setParam(key, value) {
+    tParams[key] = value;
+  }
+
+  function clearParam(key) {
+    if (angular.isDefined(key)) {
+      delete tParams[key];
+    } else {
+      tParams = {};
     }
   }
 
@@ -427,6 +407,58 @@ function MsmTable($rootScope, $filter, $q, $window, tableName, tableConfig) {
 
     return deferred.promise.then(function(result) {
       saveAndNotify('pageSize', newPageSize);
+      return result;
+    });
+  }
+
+  // ----------- Column Visibility
+
+  /**
+   * @ngdoc method
+   * @name getVisibility
+   * @methodOf mindsmash-table.msmTable
+   *
+   * @description
+   * Returns the visibility of the column with the given `key` or the visibility of all columns.
+   *
+   * @param {string=} key The column's key.
+   * @returns {boolean|Object} The visibility.
+   */
+  function getVisibility(key) {
+    return angular.isDefined(key) ? !!tState.visibility[key] : tState.visibility;
+  }
+
+  /**
+   * @ngdoc method
+   * @name setVisibility
+   * @methodOf mindsmash-table.msmTable
+   *
+   * @description
+   * Toggles or sets the visibility of the column with the given key. The visibility is set according to the following
+   * rules:
+   *
+   * - **toggle** (rotate visibility), if the `value` parameter is omitted.
+   * - **set** (spec. visibility), if the `value` is explicitly set.
+   *
+   * @param {string=} key The column's key.
+   * @param {boolean=} value The new visibility value.
+   * @returns {Promise} A table resource promise.
+   */
+  function setVisibility(key, value) {
+    var deferred = $q.defer();
+    var newVisibility = angular.isDefined(value) ? !!value : !tState.visibility[key];
+
+    if (tState.visibility[key] !== newVisibility) {
+      tState.visibility[key] = newVisibility;
+      deferred.resolve();
+    } else {
+      var args = {};
+      args[key] = newVisibility;
+      deferred.reject(args);
+    }
+
+    return deferred.promise.then(function(result) {
+      notify('visibility', tState.visibility);
       return result;
     });
   }
@@ -645,58 +677,6 @@ function MsmTable($rootScope, $filter, $q, $window, tableName, tableConfig) {
     return setActive(null);
   }
 
-  // ----------- Column Visibility
-
-  /**
-   * @ngdoc method
-   * @name getVisibility
-   * @methodOf mindsmash-table.msmTable
-   *
-   * @description
-   * Returns the visibility of the column with the given `key` or the visibility of all columns.
-   *
-   * @param {string=} key The column's key.
-   * @returns {boolean|Object} The visibility.
-   */
-  function getVisibility(key) {
-    return angular.isDefined(key) ? !!tState.visibility[key] : tState.visibility;
-  }
-
-  /**
-   * @ngdoc method
-   * @name setVisibility
-   * @methodOf mindsmash-table.msmTable
-   *
-   * @description
-   * Toggles or sets the visibility of the column with the given key. The visibility is set according to the following
-   * rules:
-   *
-   * - **toggle** (rotate visibility), if the `value` parameter is omitted.
-   * - **set** (spec. visibility), if the `value` is explicitly set.
-   *
-   * @param {string=} key The column's key.
-   * @param {boolean=} value The new visibility value.
-   * @returns {Promise} A table resource promise.
-   */
-  function setVisibility(key, value) {
-    var deferred = $q.defer();
-    var newVisibility = angular.isDefined(value) ? !!value : !tState.visibility[key];
-
-    if (tState.visibility[key] !== newVisibility) {
-      tState.visibility[key] = newVisibility;
-      deferred.resolve();
-    } else {
-      var args = {};
-      args[key] = newVisibility;
-      deferred.reject(args);
-    }
-
-    return deferred.promise.then(function(result) {
-      notify('visibility', tState.visibility);
-      return result;
-    });
-  }
-
   // ----------- Row Selection
 
   /**
@@ -795,7 +775,79 @@ function MsmTable($rootScope, $filter, $q, $window, tableName, tableConfig) {
     });
   }
 
+  // ----------- Initializers
+
+  function initName() {
+    return tableConfig.namespace + '.' + tableName;
+  }
+
+  function initCols() {
+    return tableConfig.columns;
+  }
+
+  function initRows() {
+    return [];
+  }
+
+  function initParams() {
+    return {};
+  }
+
+  function initStorage() {
+    switch(tableConfig.storage) {
+      case 'session': return sessionStorage;
+      case 'local': return localStorage;
+      default: return null;
+    }
+  }
+
+  function initState() {
+    return angular.extend({
+      page: tableConfig.page,
+      pageSize: tableConfig.pageSizes[0],
+      rowCount: 0, //TODO
+      orderBy: tableConfig.orderBy,
+      active: tableConfig.active,
+      selection: {},
+      visibility: function init() {
+        var result = {};
+        for (var i = 0; i < tCols.length; i++) {
+          result[tCols[i].key] = tCols[i].show !== false;
+        }
+        return result;
+      }()
+    }, loadState());
+  }
+
   // ----------- Helpers
+
+  function fromLocalData(params) {
+    var data = tableConfig.source;
+    return $q(function(resolve) {
+      var from = params.page * params.size;
+      var to = from + params.size;
+      var total = Math.ceil(data.length / params.size);
+      var sort = params.sort ? params.sort.split(',') : null;
+      var items = sort ? $filter('orderBy')(data, sort[0], sort[1] !== 'asc') : data;
+      items = items.slice(from, to);
+
+      resolve({
+        content: items,
+        first: params.page === 0,
+        last: params.page === total - 1,
+        number: params.page,
+        numberOfElements: items.length,
+        size: params.size,
+        sort: sort ? [{
+          direction: sort[1].toUpperCase(),
+          property: sort[0],
+          ascending: sort[1] === 'asc'
+        }] : null,
+        totalElements: data.length,
+        totalPages: total
+      });
+    });
+  }
 
   function getPageCount() {
     return Math.ceil(tState.rowCount / tState.pageSize);

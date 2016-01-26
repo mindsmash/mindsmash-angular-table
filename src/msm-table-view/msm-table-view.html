@@ -10,24 +10,24 @@
             ng-show="vm.selectionEnabled"></th>
         <th ng-repeat="col in vm.cols | filter : vm.visibility[col.key]"
             ng-class="{
-              'msm-table-isSortable': vm.orderByEnabled && col.isSortable !== false,
-              'msm-table-isSortedAsc': vm.orderBy.key === col.key && vm.orderBy.asc === true,
-              'msm-table-isSortedDesc': vm.orderBy.key === col.key && vm.orderBy.asc === false }"
-            ng-click="vm.orderByEnabled && col.isSortable !== false && vm.setOrderBy(col.key)"
+              'msm-table-isSortable': vm.orderByEnabled && col.sort !== false,
+              'msm-table-isSortedAsc': vm.orderBy.key === (col.sort || col.key) && vm.orderBy.asc === true,
+              'msm-table-isSortedDesc': vm.orderBy.key === (col.sort || col.key) && vm.orderBy.asc === false }"
+            ng-click="vm.orderByEnabled && col.sort !== false && vm.setOrderBy(col.sort || col.key)"
             translate="{{ col.name }}">
         </th>
       </tr>
     </thead>
     <thead class="msm-table-loading-bar">
       <tr>
-        <td colspan="{{ vm.cols.length + 1 }}">
+        <th colspan="{{ vm.cols.length + 1 }}">
           <div class="msm-table-progress">
             <div class="msm-table-container">
               <div class="msm-table-bar msm-table-bar1"></div>
               <div class="msm-table-bar msm-table-bar2"></div>
             </div>
           </div>
-        </td>
+        </th>
       </tr>
     </thead>
     <tbody>
@@ -38,7 +38,7 @@
             ng-show="vm.selectionEnabled"
             ng-click="vm.setSelection(row[vm.selectionKey])"></td>
         <td ng-repeat="col in vm.cols | filter : vm.visibility[col.key]"
-            data-label="{{ col.name }}"
+            data-label="{{ col.name | translate }}"
             msm-table-view-cell>{{ row[col.key] }}
         </td>
       </tr>

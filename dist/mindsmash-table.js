@@ -1,6 +1,6 @@
 /**
  * @name mindsmash-table
- * @version v0.3.2
+ * @version v0.3.3
  * @author mindsmash GmbH
  * @license MIT
  */
@@ -40,11 +40,11 @@ angular.module('mindsmash-table', [
 ]);
 
 
-angular.module("mindsmash-table").run(['$templateCache', function($templateCache) {$templateCache.put("msm-table-column-selector/msm-table-column-selector.html","<div class=\"btn-group\" uib-dropdown auto-close=\"outsideClick\"><button type=\"button\" class=\"btn btn-default\" uib-dropdown-toggle ng-disabled=\"vm.isLoading\"><span class=\"msm-table-square\"></span> <span class=\"msm-table-square\"></span> <span class=\"msm-table-square\"></span> <span class=\"msm-table-square\"></span> <span class=\"msm-table-square\"></span> <span class=\"msm-table-square\"></span> <span class=\"msm-table-square\"></span> <span class=\"msm-table-square\"></span> <span class=\"msm-table-square\"></span> <span class=\"caret\"></span></button><ul uib-dropdown-menu role=\"menu\"><li ng-repeat=\"col in vm.cols\" role=\"menuitem\" ng-class=\"{ \'disabled\': col.isSticky, \'msm-table-isSelected\': vm.visibility[col.key] }\"><a href=\"#\" ng-click=\"!col.isSticky && vm.select(col.key, $event)\" translate=\"{{ col.name }}\"></a></li></ul></div>");
+angular.module("mindsmash-table").run(['$templateCache', function($templateCache) {$templateCache.put("msm-table-column-selector/msm-table-column-selector.html","<div class=\"btn-group\" uib-dropdown auto-close=\"outsideClick\"><button type=\"button\" class=\"btn btn-default\" uib-dropdown-toggle ng-disabled=\"vm.isLoading\"><span class=\"msm-table-square\"></span> <span class=\"msm-table-square\"></span> <span class=\"msm-table-square\"></span> <span class=\"msm-table-square\"></span> <span class=\"msm-table-square\"></span> <span class=\"msm-table-square\"></span> <span class=\"msm-table-square\"></span> <span class=\"msm-table-square\"></span> <span class=\"msm-table-square\"></span> <span class=\"caret\"></span></button><ul uib-dropdown-menu role=\"menu\"><li ng-repeat=\"col in vm.cols\" role=\"menuitem\" ng-class=\"{ \'disabled\': col.sticky, \'msm-table-isSelected\': vm.visibility[col.key] }\"><a href=\"#\" ng-click=\"!col.sticky && vm.select(col.key, $event)\" translate=\"{{ col.name }}\"></a></li></ul></div>");
 $templateCache.put("msm-table-pager/msm-table-pager.html","<uib-pager ng-model=\"vm.page\" total-items=\"vm.rowCount\" items-per-page=\"vm.pageSize\" ng-disabled=\"vm.isLoading\" previous-text=\"{{ \'msmTable.pager.previous\' | translate }}\" next-text=\"{{ \'msmTable.pager.next\' | translate }}\"></uib-pager>");
-$templateCache.put("msm-table-pagination/msm-table-pagination.html","<uib-pagination ng-model=\"vm.page\" total-items=\"vm.rowCount\" items-per-page=\"vm.pageSize\" ng-disabled=\"vm.isLoading\" previous-text=\"{{ \'msmTable.pagination.previous\' | translate }}\" next-text=\"{{ \'msmTable.pagination.next\' | translate }}\" rotate=\"true\" max-size=\"5\"></uib-pagination>");
-$templateCache.put("msm-table-view/msm-table-view.html","<div><table id=\"{{ vm.name }}\" class=\"table msm-table-table-view\" ng-class=\"{ \'msm-table-isLoading\': vm.isLoading }\" ng-if=\"!vm.isMobile\" click-outside=\"vm.clearActive()\"><thead><tr><th class=\"msm-table-selector-all\" ng-show=\"vm.selectionEnabled\"></th><th ng-repeat=\"col in vm.cols | filter : vm.visibility[col.key]\" ng-class=\"{\'msm-table-isSortable\': vm.orderByEnabled && col.isSortable !== false,\'msm-table-isSortedAsc\': vm.orderBy.key === col.key && vm.orderBy.asc === true,\'msm-table-isSortedDesc\': vm.orderBy.key === col.key && vm.orderBy.asc === false }\" ng-click=\"vm.orderByEnabled && col.isSortable !== false && vm.setOrderBy(col.key)\" translate=\"{{ col.name }}\"></th></tr></thead><thead class=\"msm-table-loading-bar\"><tr><td colspan=\"{{ vm.cols.length + 1 }}\"><div class=\"msm-table-progress\"><div class=\"msm-table-container\"><div class=\"msm-table-bar msm-table-bar1\"></div><div class=\"msm-table-bar msm-table-bar2\"></div></div></div></td></tr></thead><tbody><tr ng-repeat=\"row in vm.rows\" ng-class=\"{ \'msm-table-isActive\': vm.active === $index, \'msm-table-isSelected\': vm.selection[row.id] }\" ng-click=\"vm.activeEnabled && vm.setActive($index)\"><td class=\"msm-table-selector\" ng-show=\"vm.selectionEnabled\" ng-click=\"vm.setSelection(row[vm.selectionKey])\"></td><td ng-repeat=\"col in vm.cols | filter : vm.visibility[col.key]\" data-label=\"{{ col.name }}\" msm-table-view-cell>{{ row[col.key] }}</td></tr></tbody></table><ol class=\"list-unstyled msm-table-list-view\" ng-if=\"vm.isMobile\"><li ng-repeat=\"row in vm.rows\" ng-include=\"vm.mobileTemplateUrl\"></li></ol></div>");
-$templateCache.put("msm-table-pagination-size/msm-table-pagination-size.html","<div class=\"btn-group\" uib-dropdown><button type=\"button\" class=\"btn btn-default\" uib-dropdown-toggle ng-disabled=\"vm.isLoading\">{{ vm.pageSize }} <span class=\"caret\"></span></button><ul uib-dropdown-menu role=\"menu\"><li ng-repeat=\"pageSize in vm.pageSizes\" role=\"menuitem\" ng-class=\"{ \'msm-table-isSelected\': pageSize === vm.pageSize }\"><a href=\"#\" ng-click=\"vm.select(pageSize, $event)\">{{ pageSize }}</a></li></ul></div>");}]);
+$templateCache.put("msm-table-pagination/msm-table-pagination.html","<uib-pagination ng-show=\"vm.pageSize < vm.rowCount\" ng-model=\"vm.page\" total-items=\"vm.rowCount\" items-per-page=\"vm.pageSize\" ng-disabled=\"vm.isLoading\" previous-text=\"{{ \'msmTable.pagination.previous\' | translate }}\" next-text=\"{{ \'msmTable.pagination.next\' | translate }}\" rotate=\"true\" max-size=\"5\"></uib-pagination>");
+$templateCache.put("msm-table-pagination-size/msm-table-pagination-size.html","<div class=\"btn-group\" uib-dropdown><button type=\"button\" class=\"btn btn-default\" uib-dropdown-toggle ng-disabled=\"vm.isLoading\">{{ vm.pageSize }} <span class=\"caret\"></span></button><ul uib-dropdown-menu role=\"menu\"><li ng-repeat=\"pageSize in vm.pageSizes\" role=\"menuitem\" ng-class=\"{ \'msm-table-isSelected\': pageSize === vm.pageSize }\"><a href=\"#\" ng-click=\"vm.select(pageSize, $event)\">{{ pageSize }}</a></li></ul></div>");
+$templateCache.put("msm-table-view/msm-table-view.html","<div><table id=\"{{ vm.name }}\" class=\"table msm-table-table-view\" ng-class=\"{ \'msm-table-isLoading\': vm.isLoading }\" ng-if=\"!vm.isMobile\" click-outside=\"vm.clearActive()\"><thead><tr><th class=\"msm-table-selector-all\" ng-show=\"vm.selectionEnabled\"></th><th ng-repeat=\"col in vm.cols | filter : vm.visibility[col.key]\" ng-class=\"{\'msm-table-isSortable\': vm.orderByEnabled && col.sort !== false,\'msm-table-isSortedAsc\': vm.orderBy.key === (col.sort || col.key) && vm.orderBy.asc === true,\'msm-table-isSortedDesc\': vm.orderBy.key === (col.sort || col.key) && vm.orderBy.asc === false }\" ng-click=\"vm.orderByEnabled && col.sort !== false && vm.setOrderBy(col.sort || col.key)\" translate=\"{{ col.name }}\"></th></tr></thead><thead class=\"msm-table-loading-bar\"><tr><th colspan=\"{{ vm.cols.length + 1 }}\"><div class=\"msm-table-progress\"><div class=\"msm-table-container\"><div class=\"msm-table-bar msm-table-bar1\"></div><div class=\"msm-table-bar msm-table-bar2\"></div></div></div></th></tr></thead><tbody><tr ng-repeat=\"row in vm.rows\" ng-class=\"{ \'msm-table-isActive\': vm.active === $index, \'msm-table-isSelected\': vm.selection[row.id] }\" ng-click=\"vm.activeEnabled && vm.setActive($index)\"><td class=\"msm-table-selector\" ng-show=\"vm.selectionEnabled\" ng-click=\"vm.setSelection(row[vm.selectionKey])\"></td><td ng-repeat=\"col in vm.cols | filter : vm.visibility[col.key]\" data-label=\"{{ col.name | translate }}\" msm-table-view-cell>{{ row[col.key] }}</td></tr></tbody></table><ol class=\"list-unstyled msm-table-list-view\" ng-if=\"vm.isMobile\"><li ng-repeat=\"row in vm.rows\" ng-include=\"vm.mobileTemplateUrl\"></li></ol></div>");}]);
 
 angular
     .module('mindsmash-table')
@@ -61,12 +61,12 @@ function MsmTableFactoryProvider(msmTableConfig, $translateProvider) {
   $get.$inject = ['$rootScope', '$filter', '$q', '$window'];
   var tableConfig = msmTableConfig;
 
-  $translateProvider.translations('en', {
-    'msmTable.pagination.previous': '«',
-    'msmTable.pagination.next': '»',
-    'msmTable.pager.previous': '« Previous',
-    'msmTable.pager.next': 'Next »'
-  });
+  //$translateProvider.translations('en_US', {
+  //  'msmTable.pagination.previous': '«',
+  //  'msmTable.pagination.next': '»',
+  //  'msmTable.pager.previous': '« Previous',
+  //  'msmTable.pager.next': 'Next »'
+  //});
 
   return {
     setTableConfig: defaultTableConfig,
@@ -132,34 +132,12 @@ function MsmTableFactory($rootScope, $filter, $q, $window, tableConfig) {
 function MsmTable($rootScope, $filter, $q, $window, tableName, tableConfig) {
   var vm = this;
 
-  var tName = tableConfig.namespace + '.' + tableName;
-  var tCols = tableConfig.columns;
-  var tRows = [];
-
-  var tStorage = function() {
-    if (tableConfig.storage === 'session') {
-      return sessionStorage;
-    } else if (tableConfig.storage === 'local') {
-      return localStorage;
-    }
-    return null;
-  }();
-
-  var tState = angular.extend({
-    page: tableConfig.page,
-    pageSize: tableConfig.pageSizes[0],
-    rowCount: 100, //TODO
-    orderBy: tableConfig.orderBy,
-    active: tableConfig.active,
-    selection: {},
-    visibility: function init() {
-      var result = {};
-      for (var i = 0; i < tCols.length; i++) {
-        result[tCols[i].key] = !tCols[i].isHidden;
-      }
-      return result;
-    }()
-  }, loadState());
+  var tName = initName();
+  var tCols = initCols();
+  var tRows = initRows();
+  var tParams = initParams();
+  var tStorage = initStorage();
+  var tState = initState();
 
   // ==========
 
@@ -167,10 +145,13 @@ function MsmTable($rootScope, $filter, $q, $window, tableName, tableConfig) {
   vm.getName = getName;
   vm.getCols = getCols;
   vm.getRows = getRows;
-
   vm.getRowCount = getRowCount;
 
   vm.reload = reload;
+
+  vm.getParam = getParam;
+  vm.setParam = setParam;
+  vm.clearParam = clearParam;
 
   vm.getPage = getPage;
   vm.setPage = setPage;
@@ -180,6 +161,9 @@ function MsmTable($rootScope, $filter, $q, $window, tableName, tableConfig) {
   vm.lastPage = lastPage;
   vm.getPageSize = getPageSize;
   vm.setPageSize = setPageSize;
+
+  vm.getVisibility = getVisibility;
+  vm.setVisibility = setVisibility;
 
   if (tableConfig.orderBy !== false) {
     vm.getOrderBy = getOrderBy;
@@ -197,9 +181,6 @@ function MsmTable($rootScope, $filter, $q, $window, tableName, tableConfig) {
     vm.clearActive = clearActive;
   }
 
-  vm.getVisibility = getVisibility;
-  vm.setVisibility = setVisibility;
-
   if (tableConfig.selection !== false) {
     vm.getSelection = getSelection;
     vm.setSelection = setSelection;
@@ -211,6 +192,7 @@ function MsmTable($rootScope, $filter, $q, $window, tableName, tableConfig) {
 
   // ----------
 
+  tableConfig.onInit(vm);
   vm.reload();
 
   // ==========
@@ -237,37 +219,6 @@ function MsmTable($rootScope, $filter, $q, $window, tableName, tableConfig) {
 
   // -----------
 
-  function getParams() {
-    var params = {
-      page: tState.page,
-      pageSize: tState.pageSize
-    };
-    if (tState.orderBy) {
-      params.orderBy = tState.orderBy.key;
-      params.orderAsc = tState.orderBy.asc;
-    }
-    return params;
-  }
-
-  function getLocalData(params) {
-    var data = tableConfig.source;
-    return $q(function(resolve) {
-      var from = params.page * params.pageSize;
-      var to = from + params.pageSize;
-      var items = params.orderBy ? $filter('orderBy')(data, params.orderBy, !params.orderAsc) : data;
-      items = items.slice(from, to);
-      resolve({
-        content: items,
-        number: params.page,
-        numberOfElements: items.length,
-        size: params.pageSize,
-        sort: params.orderBy,
-        totalElements: data.length,
-        totalPages: Math.ceil(data.length / params.pageSize)
-      });
-    });
-  }
-
   /**
    * @ngdoc method
    * @name reload
@@ -279,30 +230,41 @@ function MsmTable($rootScope, $filter, $q, $window, tableName, tableConfig) {
    * @returns {Promise} A table resource promise.
    */
   function reload() {
-    var params = tableConfig.onBeforeLoad(getParams());
-    var data = angular.isArray(tableConfig.source) ? getLocalData(params) : tableConfig.source(params);
+    var params = tableConfig.onBeforeLoad(angular.extend({
+      page: tState.page,
+      size: tState.pageSize,
+      sort: tState.orderBy ? tState.orderBy.key + (tState.orderBy.asc ? ',asc' : ',desc') : null
+    }, tParams), vm);
+    var data = angular.isArray(tableConfig.source) ? fromLocalData(params) : tableConfig.source(params);
 
     notify('loading', true);
 
     return data.then(function(response) {
-      response = tableConfig.onAfterLoad(response);
+      response = tableConfig.onAfterLoad(response, vm);
 
       /* refresh content */
       tRows = response.content;
       notify('items');
 
       /* refresh state */
-      var mappings = { //TODO: check mappings
-        number: 'page',
-        size: 'pageSize',
-        totalElements: 'rowCount',
-        orderBy: 'orderBy'
+      var mappings = {
+        page: 'number',
+        pageSize: 'size',
+        rowCount: 'totalElements',
+        orderBy: function(response) {
+          if (response.sort && response.sort.length) {
+            var orderBy = response.sort[0];
+            return { key: orderBy.property, asc: orderBy.ascending };
+          }
+          return null;
+        }
       };
-      for (var remoteKey in mappings) {
-        if (mappings.hasOwnProperty(remoteKey)) {
-          var localKey = mappings[remoteKey];
-          var remoteValue = response[remoteKey];
-          if (tState[localKey] !== remoteValue) {
+      for (var localKey in mappings) {
+        if (mappings.hasOwnProperty(localKey)) {
+          var localValue = tState[localKey];
+          var remoteKey = mappings[localKey];
+          var remoteValue = angular.isFunction(remoteKey) ? remoteKey(response) : response[remoteKey];
+          if (!angular.equals(localValue, remoteValue)) {
             tState[localKey] = remoteValue;
             notify(localKey, remoteValue);
           }
@@ -335,6 +297,24 @@ function MsmTable($rootScope, $filter, $q, $window, tableName, tableConfig) {
         pageSize: tState.pageSize,
         orderBy: tState.orderBy
       });
+    }
+  }
+
+  // ----------- Additional Parameters
+
+  function getParam(key) {
+    return angular.isDefined(key) ? tParams[key] : tParams;
+  }
+
+  function setParam(key, value) {
+    tParams[key] = value;
+  }
+
+  function clearParam(key) {
+    if (angular.isDefined(key)) {
+      delete tParams[key];
+    } else {
+      tParams = {};
     }
   }
 
@@ -476,6 +456,58 @@ function MsmTable($rootScope, $filter, $q, $window, tableName, tableConfig) {
 
     return deferred.promise.then(function(result) {
       saveAndNotify('pageSize', newPageSize);
+      return result;
+    });
+  }
+
+  // ----------- Column Visibility
+
+  /**
+   * @ngdoc method
+   * @name getVisibility
+   * @methodOf mindsmash-table.msmTable
+   *
+   * @description
+   * Returns the visibility of the column with the given `key` or the visibility of all columns.
+   *
+   * @param {string=} key The column's key.
+   * @returns {boolean|Object} The visibility.
+   */
+  function getVisibility(key) {
+    return angular.isDefined(key) ? !!tState.visibility[key] : tState.visibility;
+  }
+
+  /**
+   * @ngdoc method
+   * @name setVisibility
+   * @methodOf mindsmash-table.msmTable
+   *
+   * @description
+   * Toggles or sets the visibility of the column with the given key. The visibility is set according to the following
+   * rules:
+   *
+   * - **toggle** (rotate visibility), if the `value` parameter is omitted.
+   * - **set** (spec. visibility), if the `value` is explicitly set.
+   *
+   * @param {string=} key The column's key.
+   * @param {boolean=} value The new visibility value.
+   * @returns {Promise} A table resource promise.
+   */
+  function setVisibility(key, value) {
+    var deferred = $q.defer();
+    var newVisibility = angular.isDefined(value) ? !!value : !tState.visibility[key];
+
+    if (tState.visibility[key] !== newVisibility) {
+      tState.visibility[key] = newVisibility;
+      deferred.resolve();
+    } else {
+      var args = {};
+      args[key] = newVisibility;
+      deferred.reject(args);
+    }
+
+    return deferred.promise.then(function(result) {
+      notify('visibility', tState.visibility);
       return result;
     });
   }
@@ -694,58 +726,6 @@ function MsmTable($rootScope, $filter, $q, $window, tableName, tableConfig) {
     return setActive(null);
   }
 
-  // ----------- Column Visibility
-
-  /**
-   * @ngdoc method
-   * @name getVisibility
-   * @methodOf mindsmash-table.msmTable
-   *
-   * @description
-   * Returns the visibility of the column with the given `key` or the visibility of all columns.
-   *
-   * @param {string=} key The column's key.
-   * @returns {boolean|Object} The visibility.
-   */
-  function getVisibility(key) {
-    return angular.isDefined(key) ? !!tState.visibility[key] : tState.visibility;
-  }
-
-  /**
-   * @ngdoc method
-   * @name setVisibility
-   * @methodOf mindsmash-table.msmTable
-   *
-   * @description
-   * Toggles or sets the visibility of the column with the given key. The visibility is set according to the following
-   * rules:
-   *
-   * - **toggle** (rotate visibility), if the `value` parameter is omitted.
-   * - **set** (spec. visibility), if the `value` is explicitly set.
-   *
-   * @param {string=} key The column's key.
-   * @param {boolean=} value The new visibility value.
-   * @returns {Promise} A table resource promise.
-   */
-  function setVisibility(key, value) {
-    var deferred = $q.defer();
-    var newVisibility = angular.isDefined(value) ? !!value : !tState.visibility[key];
-
-    if (tState.visibility[key] !== newVisibility) {
-      tState.visibility[key] = newVisibility;
-      deferred.resolve();
-    } else {
-      var args = {};
-      args[key] = newVisibility;
-      deferred.reject(args);
-    }
-
-    return deferred.promise.then(function(result) {
-      notify('visibility', tState.visibility);
-      return result;
-    });
-  }
-
   // ----------- Row Selection
 
   /**
@@ -844,7 +824,79 @@ function MsmTable($rootScope, $filter, $q, $window, tableName, tableConfig) {
     });
   }
 
+  // ----------- Initializers
+
+  function initName() {
+    return tableConfig.namespace + '.' + tableName;
+  }
+
+  function initCols() {
+    return tableConfig.columns;
+  }
+
+  function initRows() {
+    return [];
+  }
+
+  function initParams() {
+    return {};
+  }
+
+  function initStorage() {
+    switch(tableConfig.storage) {
+      case 'session': return sessionStorage;
+      case 'local': return localStorage;
+      default: return null;
+    }
+  }
+
+  function initState() {
+    return angular.extend({
+      page: tableConfig.page,
+      pageSize: tableConfig.pageSizes[0],
+      rowCount: 0, //TODO
+      orderBy: tableConfig.orderBy,
+      active: tableConfig.active,
+      selection: {},
+      visibility: function init() {
+        var result = {};
+        for (var i = 0; i < tCols.length; i++) {
+          result[tCols[i].key] = tCols[i].show !== false;
+        }
+        return result;
+      }()
+    }, loadState());
+  }
+
   // ----------- Helpers
+
+  function fromLocalData(params) {
+    var data = tableConfig.source;
+    return $q(function(resolve) {
+      var from = params.page * params.size;
+      var to = from + params.size;
+      var total = Math.ceil(data.length / params.size);
+      var sort = params.sort ? params.sort.split(',') : null;
+      var items = sort ? $filter('orderBy')(data, sort[0], sort[1] !== 'asc') : data;
+      items = items.slice(from, to);
+
+      resolve({
+        content: items,
+        first: params.page === 0,
+        last: params.page === total - 1,
+        number: params.page,
+        numberOfElements: items.length,
+        size: params.size,
+        sort: sort ? [{
+          direction: sort[1].toUpperCase(),
+          property: sort[0],
+          ascending: sort[1] === 'asc'
+        }] : null,
+        totalElements: data.length,
+        totalPages: total
+      });
+    });
+  }
 
   function getPageCount() {
     return Math.ceil(tState.rowCount / tState.pageSize);
@@ -946,19 +998,50 @@ function ColumnSelectorController($rootScope, $scope) {
 angular
     .module('mindsmash-table')
     .constant('msmTableConfig', {
+
+      /* The table' namespace: events, storage, etc. */
       namespace: 'msmTable',
+
+      /* The table's data source: function(params) | Array */
       source: angular.noop,
+
+      /* The table's columns: */
       columns: [],
+
+      /* Callback - executes after the table has been initialized: function(api) */
+      onInit: angular.noop,
+
+      /* Callback - executes on Enter for the active row: function(row) */
       onAction: angular.noop,
+
+      /* Callback - executes before new table data is loaded: function(params, api) */
       onBeforeLoad: angular.identity,
+
+      /* Callback - executes after new table data has been loaded: function(data, api) */
       onAfterLoad: angular.identity,
+
+      /* The table's initial page number */
       page: 0,
+
+      /* The table's page sizes: the first page size will be selected on first load */
       pageSizes: [10, 25, 50, 100],
+
+      /* The table's initial sort order: can be disabled if set to false */
       orderBy: null,
+
+      /* The table's initial active row: can be disabled if set to false */
       active: null,
+
+      /* The table's selection key: can be disabled if set to false */
       selection: 'id',
+
+      /* The table's storage: can be 'session', 'local' or disabled if set to false */
       storage: 'session',
+
+      /* The table's mobile template breakpoint */
       mobileSize: 'xs',
+
+      /* An optional mobile template for table rows */
       mobileTemplateUrl: null
     });
 
@@ -1013,7 +1096,9 @@ function PagerController($rootScope, $scope) {
   // ==========
 
   $scope.$watch('vm.page', function(newVal, oldVal) {
-    api.setPage(newVal - OFFSET);
+    if (newVal !== oldVal) {
+      api.setPage(newVal - OFFSET);
+    }
   });
 
   // ----------
@@ -1090,7 +1175,9 @@ function PaginationController($rootScope, $scope) {
   // ==========
 
   $scope.$watch('vm.page', function(newVal, oldVal) {
-    api.setPage(newVal - OFFSET);
+    if (newVal !== oldVal) {
+      api.setPage(newVal - OFFSET);
+    }
   });
 
   // ----------

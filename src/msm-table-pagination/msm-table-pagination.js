@@ -47,7 +47,9 @@ function PaginationController($rootScope, $scope) {
   // ==========
 
   $scope.$watch('vm.page', function(newVal, oldVal) {
-    api.setPage(newVal - OFFSET);
+    if (newVal !== oldVal) {
+      api.setPage(newVal - OFFSET);
+    }
   });
 
   // ----------

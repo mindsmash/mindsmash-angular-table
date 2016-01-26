@@ -27,19 +27,7 @@
         columns: [
           { key: 'one', name: 'One' },
           { key: 'two', name: 'Two' }],
-        source: function(params) {
-          return $q(function(resolve, reject) {
-            resolve({
-              content: generate(55),
-              number: params.page,
-              numberOfElements: params.pageSize,
-              size: params.pageSize,
-              sort: params.orderBy,
-              totalElements: 55,
-              totalPages: 6
-            });
-          });
-        }
+        source: generate(55)
       });
 
       apply(msmTable.reload());

@@ -78,7 +78,7 @@
 .table > tbody > tr:first-child > td {
   border-top: 0; }
 
-thead.msm-table-loading-bar > tr > td {
+.table > thead.msm-table-loading-bar > tr > th {
   padding: 0; }
 
 .msm-table-progress {
@@ -100,7 +100,7 @@ thead.msm-table-loading-bar > tr > td {
   background-color: #e1e9f0; }
 
 .msm-table-progress .msm-table-bar {
-  background-color: #317DC1;
+  background-color: #93b9db;
   position: absolute;
   left: 0;
   top: 0;

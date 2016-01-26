@@ -1,9 +1,5 @@
 .msm-table-table-view {
 
-  //> thead > tr > th {
-  //  border-bottom: 1px solid #ddd;
-  //}
-
   // ----------- Sorting
 
   th.msm-table-isSortable {
@@ -129,7 +125,7 @@
   border-top: 0;
 }
 
-thead.msm-table-loading-bar > tr > td {
+.table > thead.msm-table-loading-bar > tr > th {
   padding: 0;
 }
 
@@ -155,7 +151,7 @@ thead.msm-table-loading-bar > tr > td {
 }
 
 .msm-table-progress .msm-table-bar {
-  background-color: #317DC1;
+  background-color: mix(#317DC1, #f5f5f5, 50%);
   position: absolute;
   left: 0;
   top: 0;
